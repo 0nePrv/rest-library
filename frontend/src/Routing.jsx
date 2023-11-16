@@ -6,6 +6,9 @@ import {GenreComponent} from "./model/genre/GenreComponent";
 import {AuthorComponent} from "./model/author/AuthorComponent";
 import {Navbar} from "./components/Navbar";
 import {EditPage} from "./pages/EditPage";
+import {BookForm} from "./model/book/BookForm";
+import {AuthorForm} from "./model/author/AuthorForm";
+import {GenreForm} from "./model/genre/GenreForm";
 
 export const Routing = () => {
 
@@ -13,16 +16,19 @@ export const Routing = () => {
     {
       resource: 'book',
       DisplayComponent: BookComponent,
+      FormComponent: BookForm,
       name: 'Books'
     },
     {
       resource: 'author',
-      Component: AuthorComponent,
+      DisplayComponent: AuthorComponent,
+      FormComponent: AuthorForm,
       name: 'Authors'
     },
     {
       resource: 'genre',
-      Component: GenreComponent,
+      DisplayComponent: GenreComponent,
+      FormComponent: GenreForm,
       name: 'Genres'
     }
   ]
@@ -43,21 +49,13 @@ export const Routing = () => {
                                  displayName={route.name}/>
                            }/>
             )}
-            {routes.map(route =>
+            {routes.map(
+                route =>
                 <Route path={`/${route.resource}/edit/:id`}
                        element={
                          <EditPage
-                             resource={`${route.resource}`}
-                             Component={route.DisplayComponent}
-                             displayName={route.name}/>
-                       }/>
-            )}
-            {routes.map(route =>
-                <Route path={`/${route.resource}/new`}
-                       element={
-                         <EditPage
-                             resource={`${route.resource}`}
-                             Component={route.DisplayComponent}
+                             resource={route.resource}
+                             Component={route.FormComponent}
                              displayName={route.name}/>
                        }/>
             )}

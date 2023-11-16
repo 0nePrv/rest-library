@@ -2,7 +2,7 @@ import {useState} from 'react';
 import axios from 'axios';
 
 // TODO change to localhost
-const BASE_API_URL = 'http://192.168.0.104:8080/api';
+const BASE_API_URL = 'http://localhost:8080/api';
 
 export const useLibraryApi = (resource = 'book') => {
   const URL_WITH_RESOURCE = `${BASE_API_URL}/${resource}`;
