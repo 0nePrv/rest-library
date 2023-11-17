@@ -1,9 +1,13 @@
-import {BrowserRouter as Router} from 'react-router-dom';
+import {
+  BrowserRouter as Router,
+  Navigate,
+  Route,
+  Routes
+} from 'react-router-dom';
 import styles from "../App.module.css";
-import {Navbar} from "../components/Navbar";
+import {Navbar} from "../ui/Navbar";
 import {AuthorRoutes} from "./AuthorRoutes";
 import {GenreRoutes} from "./GenreRoutes";
-import {CommentRoutes} from "./CommentRoutes";
 import {BookRoutes} from "./BookRoutes";
 
 export const Routing = () => {
@@ -11,10 +15,12 @@ export const Routing = () => {
       <div className={styles.App}>
         <Router>
           <Navbar/>
-          <AuthorRoutes/>
-          <GenreRoutes/>
-          <BookRoutes/>
-          <CommentRoutes/>
+          <Routes>
+            <Route path={'/'} element={<Navigate to={'/book'}/>}/>
+            <Route path={'/book/*'} element={<BookRoutes/>}/>
+            <Route path={'/author/*'} element={<AuthorRoutes/>}/>
+            <Route path={'/genre/*'} element={<GenreRoutes/>}/>
+          </Routes>
         </Router>
       </div>
   );

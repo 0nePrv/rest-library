@@ -1,5 +1,5 @@
-import './action-panel.css'
-import '../components/button.css'
+import '../styles/action-panel.css'
+import '../styles/button.css'
 import {useLibraryApi} from "../hooks/useLibraryApi";
 import {useNavigate} from "react-router-dom";
 
@@ -11,18 +11,21 @@ export const ActionPanel = ({obj, resource, refetch}) => {
 
   const handleDelete = async (e) => {
     e.preventDefault();
-    try {
-      await remove(obj.id);
-      refetch();
-    } catch (error) {
-      console.error('Ошибка при удалении', error);
-    }
+    await remove(obj.id);
+    refetch();
   };
+
+  const handleEdit = () => {
+    if (resource === 'comment') {
+      navigate(`/book/${obj.bookId}/comment/edit/${obj.id}`)
+    } else {
+      navigate(`/${resource}/edit/${obj.id}`)
+    }
+  }
 
   return (
       <div className="action-panel">
-        <button className={"button update-button"}
-                onClick={() => navigate(`/${resource}/edit/${obj.id}`)}>
+        <button className={"button update-button"} onClick={handleEdit}>
           <img src="/icons/edit.png" alt="edit"/>
         </button>
         <button className="button delete-button" onClick={handleDelete}>

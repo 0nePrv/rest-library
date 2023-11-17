@@ -1,49 +1,72 @@
 import {useQuery} from "react-query";
 import {useLibraryApi} from "../hooks/useLibraryApi";
-import {BookComponent} from "../model/book/BookComponent";
-import "../components/button.css"
-import "./list.css"
-import {ActionPanel} from "../components/ActionPannel";
-import {useParams} from "react-router-dom";
+import {BookDisplay} from "../model/book/BookDisplay";
+import "../styles/button.css"
+import "../styles/list.css"
+import {ActionPanel} from "../ui/ActionPannel";
+import {useNavigate, useParams} from "react-router-dom";
+import {Loading} from "../ui/Loading";
 
 export const ListPage = ({
   resource = 'book',
-  Component = BookComponent,
+  Component = BookDisplay,
   displayName = 'Books'
 }) => {
 
-  const {data, getAll} = useLibraryApi(resource);
+  const {getAll} = useLibraryApi(resource);
 
   const {bookId: id} = useParams()
 
-  const {error: errors, isLoading, refetch} = useQuery(
-      ['getAll', resource],
-      () => getAll(resource === 'comment' && {bookId: id}));
+  const navigate = useNavigate()
+
+  const doQuery = () => {
+    return getAll(resource === 'comment' && id && {bookId: id})
+  }
+
+  const {
+    data,
+    refetch,
+    isLoading,
+    error
+  } = useQuery(['getAll', resource], doQuery);
 
   if (isLoading) {
-    return <h1>Loading...</h1>
+    return <Loading/>
   }
-  if (errors) {
-    return <h1>${errors.message}</h1>
+  if (error) {
+    return <h1>{error.message}</h1>
   }
+
+  const processCreate = () => {
+    if (resource === 'comment' && id) {
+      navigate(`/book/${id}/comment/new`)
+    } else {
+      navigate(`/${resource}/new`)
+    }
+  }
+
   return (
       <div>
         <div className={"header"}>
           <h1>{displayName} page</h1>
-          <button className={"button"} onClick={() => refetch()}>
+          <button className={"button"} title={"refresh"}
+                  onClick={() => refetch()}>
             <img src="/icons/refresh.png" alt={"refresh"}/>
+          </button>
+          <button className={"button"} title={"add"} onClick={processCreate}>
+            <img src={"/icons/plus.png"} alt={"new"}/>
           </button>
         </div>
         <div className={"container"}>
           {data && data.map(obj =>
               <div key={obj?.id} className={"item"}>
                 <Component props={obj}/>
-                <ActionPanel obj={obj}
-                             resource={resource}
+                <ActionPanel obj={obj} resource={resource}
                              refetch={() => refetch()}/>
               </div>
           )}
         </div>
       </div>
+
   )
 }

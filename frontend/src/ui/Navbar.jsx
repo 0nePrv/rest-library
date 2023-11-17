@@ -1,5 +1,5 @@
 import {Link} from "react-router-dom";
-import './navbar.css'
+import '../styles/navbar.css'
 
 export const Navbar = () => {
 
@@ -22,7 +22,7 @@ export const Navbar = () => {
       <nav className={"navbar"}>
         {routes.map(
             route =>
-                <Link key={`${route.resource} roure`}
+                <Link key={`${route.resource} route`}
                       className={"links"}
                       to={`/${route.resource}`}>
                   {route.name}

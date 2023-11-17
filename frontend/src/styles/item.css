@@ -2,13 +2,19 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  padding: 20px;
+  padding: 10px;
   border: 1px solid #ccc;
   background-color: #f9f9f9;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   animation-name: fadeIn;
   animation-duration: 0.5s;
-  border-radius: 12%;
+}
+
+.item .book-item {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
 .item .name {

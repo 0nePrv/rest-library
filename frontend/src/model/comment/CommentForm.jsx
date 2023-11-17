@@ -1,6 +1,13 @@
-import React, {useEffect, useState} from 'react';
-import {useLibraryApi} from "../../hooks/useLibraryApi";
-import {useQuery} from "react-query";
+import React, {useEffect} from 'react';
+import {useLibraryApi} from '../../hooks/useLibraryApi';
+import {useQuery} from 'react-query';
+import {Loading} from '../../ui/Loading';
+import '../../styles/form.css';
+import * as yup from 'yup';
+import {useForm} from 'react-hook-form';
+import {yupResolver} from '@hookform/resolvers/yup';
+import {TextAreaComponent} from '../../ui/TextAreaComponent';
+import {SelectComponent} from '../../ui/SelectComponent';
 
 export const CommentForm = ({
   data: comment = {},
@@ -8,77 +15,71 @@ export const CommentForm = ({
   handleCancel
 }) => {
 
-  const initTextState = comment?.text || '';
-  const [text, setText] = useState(initTextState);
+  const {getAll} = useLibraryApi('book');
 
-  const initBookIdState = comment?.bookId || 0;
-  const [bookId, setBookId] = useState(initBookIdState);
+  const {data: books, error, isLoading} = useQuery(['getAll', 'book'],
+      () => getAll({withRelations: false}));
 
-  const {data: books, getAll} = useLibraryApi('book');
+  const schema = yup.object().shape({
+    text: yup
+    .string()
+    .required('Text is required')
+    .min(5, 'Text is too short')
+    .max(300, 'Text is too long'),
+    bookId: yup
+    .number()
+    .required('Book is required')
+    .min(1, 'Book is not chosen')
+  })
 
-  const {error, isLoading} = useQuery(['getAll', 'book'],
-      () => getAll());
+  const {
+    register,
+    handleSubmit: onFormSubmit,
+    setValue,
+    getValues,
+    formState
+  } = useForm({
+    resolver: yupResolver(schema)
+  });
 
   useEffect(() => {
-    if (comment?.text && comment?.bookId) {
-      setText(comment.text);
-      setBookId(comment.bookId);
-    }
-  }, [comment?.text, comment?.bookId]);
+    setValue('text', comment?.text || '')
+    setValue('bookId', comment?.bookId || 0)
+  }, [comment?.text, comment?.bookId, setValue])
 
   if (isLoading) {
-    return <h1>Loading...</h1>;
+    return <Loading/>
   }
 
   if (error) {
-    return (
-        <h1>${error.message}</h1>
-    );
+    return <h1>${error.message}</h1>
   }
 
-  const process = () => {
-    if (text && bookId) {
-      comment.name = text;
-      comment.authorId = bookId;
-      handleSubmit(comment);
-    } else {
-      console.log('Invalid values: ', text, bookId);
-    }
+  const processForm = async (data) => {
+    await handleSubmit({...comment, text: data.text, bookId: data.bookId})
   };
 
   return (
-      <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            process();
-          }}>
-        <div className="row">
-          <label htmlFor="name-input">Name:</label>
-          <textarea
-              id="name-input"
-              placeholder={comment?.text}
-              value={text || initTextState}
-              onChange={(event) => setText(event.target.value)}/>
-        </div>
-        <div className="row">
-          <label htmlFor="book-select">Genre:</label>
-          <select id="book-select"
-                  value={bookId || initBookIdState}
-                  onChange={(event) => setBookId(
-                      Number.parseInt(event.target.value))}>
-            <option value={0}>Select a book</option>
-            {books && books.map((book) => (
-                <option key={book.id} value={book.id}>
-                  {book.name}
-                </option>
-            ))}
-          </select>
-        </div>
+      <form className={'form-container'} onSubmit={onFormSubmit(processForm)}>
+        <TextAreaComponent
+            title={'Text'}
+            value={getValues().text}
+            callback={(text) => setValue('text', text)}
+            register={register('text')}
+            errors={formState.errors.text?.message}
+        />
+        <SelectComponent
+            title={'Book'}
+            value={getValues().bookId}
+            callback={(id) => setValue('bookId', id)}
+            register={register('bookId')}
+            errors={formState.errors.bookId?.message}
+            items={books}
+            displayField={'name'}
+        />
         <div className="row">
           <input type="submit" value="Submit"/>
-          <button type="button" onClick={handleCancel}>
-            Cancel
-          </button>
+          <button type="button" onClick={handleCancel}>Cancel</button>
         </div>
       </form>
   );

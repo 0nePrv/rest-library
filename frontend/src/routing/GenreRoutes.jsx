@@ -3,7 +3,7 @@ import {ListPage} from "../pages/ListPage";
 import {EditPage} from "../pages/EditPage";
 import {CreatePage} from "../pages/CreatePage";
 import {GenreForm} from "../model/genre/GenreForm";
-import {GenreComponent} from "../model/genre/GenreComponent";
+import {GenreDisplay} from "../model/genre/GenreDisplay";
 
 export const GenreRoutes = () => {
 
@@ -11,22 +11,21 @@ export const GenreRoutes = () => {
     resource: 'genre',
     name: 'Genres',
     Form: GenreForm,
-    Display: GenreComponent
+    Display: GenreDisplay
   }
 
   return (
       <Routes>
-        <Route path={`/${(route.resource)}`} element={
+        <Route path={'/'} element={
           <ListPage Component={route.Display} displayName={route.name}
                     resource={route.resource}/>}/>
-        <Route path={`/${(route.resource)}/edit/:id`} element={
+        <Route path={'/edit/:id'} element={
           <EditPage Component={route.Form} displayName={route.name}
                     resource={route.resource}/>}/>
-        <Route path={`/${(route.resource)}/new`} element={
+        <Route path={'/new'} element={
           <CreatePage Component={route.Form} displayName={route.name}
                       resource={route.resource}/>}/>
-        <Route path={`/${(route.resource)}/*`}
-               element={<h1>Page not found</h1>}/>
+        <Route path={'/*'} element={<h1>Page not found</h1>}/>
       </Routes>
   )
 }

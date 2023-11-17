@@ -1,8 +1,8 @@
 .container {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
   gap: 50px;
-  padding: 50px;
+  padding: 0 50px 50px;
 }
 
 .header {
@@ -12,6 +12,7 @@
   padding: 10px;
 }
 
-.header h1 {
+.header .button {
   margin-right: 10px;
+  margin-left: 10px;
 }

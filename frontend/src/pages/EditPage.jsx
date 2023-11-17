@@ -2,6 +2,7 @@ import {useNavigate, useParams} from "react-router-dom";
 import {useQuery} from "react-query";
 import {useLibraryApi} from "../hooks/useLibraryApi";
 import {BookForm} from "../model/book/BookForm";
+import {Loading} from "../ui/Loading";
 
 export const EditPage = ({
   resource = 'book',
@@ -9,29 +10,32 @@ export const EditPage = ({
   displayName = 'Books'
 }) => {
 
-  const {update, get, data} = useLibraryApi(resource)
+  const {update, get} = useLibraryApi(resource)
 
-  const {id} = useParams()
+  const {bookId, id} = useParams()
 
   const navigate = useNavigate();
 
-  const {error: errors, isLoading} = useQuery(['update', resource],
-      () => get(id))
+  const {data, error, isLoading} = useQuery(['update', resource], () => get(id))
 
   if (isLoading) {
-    return <h1>Loading...</h1>
+    return <Loading/>
   }
-  if (errors) {
-    return <h1>${errors.message}</h1>
+  if (error) {
+    return <h1>${error.message}</h1>
   }
 
   const handleSubmit = async (data) => {
-    await update(data);
-    doNavigate()
+    await update(data)
+    doNavigate(data)
   }
 
-  const doNavigate = () => {
-    navigate(`/${resource}`)
+  const doNavigate = (obj = data) => {
+    if (resource === 'comment') {
+      navigate(`/book/${obj?.bookId || bookId}/comment`)
+    } else {
+      navigate(`/${resource}`)
+    }
   }
 
   return (

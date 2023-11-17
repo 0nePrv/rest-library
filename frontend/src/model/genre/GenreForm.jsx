@@ -1,41 +1,47 @@
-import React, {useEffect, useState} from 'react';
+import React from 'react';
+import {TextInputComponent} from '../../ui/TextInputComponent';
+import '../../styles/form.css';
+import * as yup from 'yup';
+import {useForm} from 'react-hook-form';
+import {yupResolver} from '@hookform/resolvers/yup';
 
 export const GenreForm = ({data: genre = {}, handleSubmit, handleCancel}) => {
+  const schema = yup.object().shape({
+    name: yup
+    .string()
+    .required('Name is required')
+    .min(5, 'Name too short')
+    .max(30, 'Name too long'),
+  });
 
-  const initialState = genre?.name || '';
+  const {
+    register,
+    handleSubmit: onFormSubmit,
+    setValue,
+    getValues,
+    formState
+  } = useForm({
+    resolver: yupResolver(schema),
+  });
 
-  const [name, setName] = useState(initialState);
+  React.useEffect(() => {
+    setValue('name', genre?.name || '');
+  }, [genre?.name, setValue]);
 
-  useEffect(() => {
-    if (genre?.name) {
-      setName(genre.name)
-    }
-  }, [genre?.name]);
-
-  const process = () => {
-    if (genre.name) {
-      genre.name = name
-      handleSubmit(genre)
-    } else {
-      console.log('Invalid name:', name);
-    }
+  const processForm = async (formData) => {
+    await handleSubmit({...genre, name: formData.name});
   };
 
   return (
-      <form onSubmit={(e) => {
-        e.preventDefault();
-        process();
-      }}>
-        <div className="row">
-          <label htmlFor="name-input">Name:</label>
-          <input
-              type="text"
-              id="name-input"
-              placeholder={genre?.name}
-              value={name || initialState}
-              onChange={(event) => setName(event.target.value)}
-          />
-        </div>
+      <form className={'form-container'}
+            onSubmit={onFormSubmit(processForm)}>
+        <TextInputComponent
+            title={'Name'}
+            value={getValues().name}
+            callback={(name) => setValue('name', name)}
+            register={register('name')}
+            errors={formState.errors.name?.message}
+        />
         <div className="row">
           <input type="submit" value="Submit"/>
           <button type="button" onClick={handleCancel}>

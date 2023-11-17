@@ -1,103 +1,110 @@
-import React, {useEffect, useState} from 'react';
 import {useLibraryApi} from "../../hooks/useLibraryApi";
 import {useQuery} from "react-query";
+import '../../styles/form.css'
+import * as yup from "yup";
+import {useForm} from "react-hook-form";
+import {yupResolver} from "@hookform/resolvers/yup";
+import React, {useEffect} from "react";
+import {Loading} from "../../ui/Loading";
+import {TextInputComponent} from "../../ui/TextInputComponent";
+import {SelectComponent} from "../../ui/SelectComponent";
 
 export const BookForm = ({data: book = {}, handleSubmit, handleCancel}) => {
 
-  const initialName = book?.name || '';
-  const [name, setName] = useState(initialName);
+  const {getAll: getAllGenres} = useLibraryApi('genre')
 
-  const initialAuthorId = book?.authorId || 0;
-  const [authorId, setAuthorId] = useState(initialAuthorId);
+  const {getAll: getAllAuthors} = useLibraryApi('author')
 
-  const initialGenreId = book?.genreId || 0;
-  const [genreId, setGenreId] = useState(initialGenreId);
+  const {
+    data: authors,
+    isLoading: authorsIsLoading,
+    error: authorsError
+  } = useQuery(['getAll', 'author'], () => getAllAuthors())
 
-  const {data: genres, getAll: getAllGenres} = useLibraryApi('genre');
-  const {data: authors, getAll: getAllAuthors} = useLibraryApi('author');
+  const {
+    data: genres,
+    isLoading: genresIsLoading,
+    error: genresError
+  } = useQuery(['getAll', 'genre'], () => getAllGenres())
 
-  const {error: genreErrors, genreIsLoading} = useQuery(['getAll', 'genre'],
-      () => getAllGenres());
-  const {error: authorErrors, authorIsLoading} = useQuery(['getAll', 'author'],
-      () => getAllAuthors());
+  const schema = yup.object().shape({
+    name: yup
+    .string().required('Name is required')
+    .min(2, 'Name is too short')
+    .max(30, 'Name is too long'),
+    authorId: yup.number().required('Author is required')
+    .min(1, 'Author is not chosen'),
+    genreId: yup.number().required('Genre is required')
+    .min(1, 'Genre is not chosen')
+  });
+
+  const {
+    formState,
+    setValue,
+    getValues,
+    register,
+    handleSubmit: onFormSubmit
+  } = useForm({
+    resolver: yupResolver(schema)
+  })
 
   useEffect(() => {
-    if (book?.name && book?.authorId && book?.genreId) {
-      setName(book.name);
-      setAuthorId(book.authorId);
-      setGenreId(book.genreId);
-    }
-  }, [book?.name, book?.authorId, book?.genreId]);
+    setValue('name', book?.name || '');
+    setValue('authorId', book?.authorId || 0);
+    setValue('genreId', book?.genreId || 0);
+  }, [book?.name, book?.authorId, book?.genreId, setValue]);
 
-  if (authorIsLoading || genreIsLoading) {
-    return <h1>Loading...</h1>;
+  if (authorsIsLoading || genresIsLoading) {
+    return <Loading/>
   }
 
-  if (authorErrors || genreErrors) {
+  if (authorsError || genresError) {
     return (
         <div>
-          <h1>${authorErrors.message}</h1>
-          <h1>${genreErrors.message}</h1>
+          <h1>{authorsError.message}</h1>
+          <h1>{genresError.message}</h1>
         </div>
     );
   }
 
-  const process = () => {
-    if (name && authorId && genreId) {
-      const updatedBook = {...book, name, authorId, genreId};
-      handleSubmit(updatedBook);
-    } else {
-      console.log('Invalid values: ', name, authorId, genreId);
-    }
+  const processForm = async (data) => {
+    await handleSubmit({
+      ...book,
+      name: data.name,
+      authorId: data.authorId,
+      genreId: data.genreId
+    });
   };
 
   return (
-      <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            process();
-          }}>
-        <div className="row">
-          <label htmlFor="name-input">Name:</label>
-          <input type="text" id="name-input" placeholder={book?.name}
-                 value={name || initialName}
-                 onChange={(event) => setName(event.target.value)}/>
-        </div>
-        <div className="row">
-          <label htmlFor="author-select">Author:</label>
-          <select
-              id="author-select"
-              value={authorId || initialAuthorId}
-              onChange={(event) => setAuthorId(
-                  Number.parseInt(event.target.value))}>
-            <option value={0}>Select an author</option>
-            {authors && authors.map((author) => (
-                <option key={author.id} value={author.id}>
-                  {author.name}
-                </option>
-            ))}
-          </select>
-        </div>
-        <div className="row">
-          <label htmlFor="genre-select">Genre:</label>
-          <select
-              id="genre-select"
-              value={genreId || initialGenreId}
-              onChange={(event) => setGenreId(
-                  Number.parseInt(event.target.value))}>
-            <option value={0}>Select a genre</option>
-            {genres && genres.map((genre) => (
-                <option key={genre.id} value={genre.id}>
-                  {genre.name}
-                </option>
-            ))}
-          </select>
-        </div>
+      <form className={'form-container'}
+            onSubmit={onFormSubmit(processForm)}>
+        <TextInputComponent
+            title={'Name'}
+            value={getValues().name}
+            callback={(name) => setValue('name', name)}
+            register={register('name')}
+            errors={formState.errors.name?.message}
+        />
+        <SelectComponent
+            title={'Author'}
+            value={getValues().authorId}
+            callback={(id) => setValue('authorId', id)}
+            register={register('authorId')}
+            errors={formState.errors.authorId?.message}
+            items={authors} displayField={'name'}
+        />
+        <SelectComponent
+            title={'Gerne'}
+            value={getValues().genreId}
+            callback={(id) => setValue('genreId', id)}
+            register={register('genreId')}
+            errors={formState.errors.genreId?.message}
+            items={genres} displayField={'name'}
+        />
         <div className="row">
           <input type="submit" value="Submit"/>
-          <button type="button" onClick={handleCancel}>
-            Cancel
-          </button>
+          <button type="button" onClick={handleCancel}>Cancel</button>
         </div>
       </form>
   );

@@ -1,6 +1,6 @@
-import '../../pages/item.css'
+import '../../styles/item.css'
 
-export const GenreComponent = ({props: genre}) => {
+export const GenreDisplay = ({props: genre}) => {
   return (
       <div key={genre.id}>
         <p className={"name"}>{genre.name}</p>

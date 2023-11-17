@@ -13,7 +13,7 @@ function App() {
   return (
       <div className={styles.App}>
         <QueryClientProvider client={client}>
-        <Routing/>
+          <Routing/>
         </QueryClientProvider>
       </div>
   );
