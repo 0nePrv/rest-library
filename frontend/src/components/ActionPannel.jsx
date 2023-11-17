@@ -23,7 +23,7 @@ export const ActionPanel = ({obj, resource, refetch}) => {
       <div className="action-panel">
         <button className={"button update-button"}
                 onClick={() => navigate(`/${resource}/edit/${obj.id}`)}>
-          <img src="/icons/refresh.png" alt="Update"/>
+          <img src="/icons/edit.png" alt="edit"/>
         </button>
         <button className="button delete-button" onClick={handleDelete}>
           <img src="/icons/delete.png" alt="Delete"/>

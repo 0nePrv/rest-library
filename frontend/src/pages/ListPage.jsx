@@ -4,13 +4,21 @@ import {BookComponent} from "../model/book/BookComponent";
 import "../components/button.css"
 import "./list.css"
 import {ActionPanel} from "../components/ActionPannel";
+import {useParams} from "react-router-dom";
 
-export const ListPage = ({resource = 'book', Component = BookComponent, displayName = 'Books'}) => {
+export const ListPage = ({
+  resource = 'book',
+  Component = BookComponent,
+  displayName = 'Books'
+}) => {
 
   const {data, getAll} = useLibraryApi(resource);
 
+  const {bookId: id} = useParams()
+
   const {error: errors, isLoading, refetch} = useQuery(
-      `getAll${resource}`, () => getAll());
+      ['getAll', resource],
+      () => getAll(resource === 'comment' && {bookId: id}));
 
   if (isLoading) {
     return <h1>Loading...</h1>
@@ -28,7 +36,7 @@ export const ListPage = ({resource = 'book', Component = BookComponent, displayN
         </div>
         <div className={"container"}>
           {data && data.map(obj =>
-              <div className={"item"}>
+              <div key={obj?.id} className={"item"}>
                 <Component props={obj}/>
                 <ActionPanel obj={obj}
                              resource={resource}

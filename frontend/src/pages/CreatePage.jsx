@@ -1,30 +1,30 @@
+import {useNavigate} from "react-router-dom";
 import {useLibraryApi} from "../hooks/useLibraryApi";
-import {useParams} from "react-router-dom";
-import {useQuery} from "react-query";
+import {BookForm} from "../model/book/BookForm";
 
-export const CreatePage = (resource, displayName, Component) => {
+export const CreatePage = ({
+  resource = 'book',
+  Component = BookForm,
+  displayName = 'Books'
+}) => {
 
-  const {update, get, data} = useLibraryApi(resource)
+  const navigate = useNavigate()
 
-  const {id} = useParams()
-
-  const {error: errors, isLoading} = useQuery(`$update${resource}`,
-      () => get(id))
-
-  if (isLoading) {
-    return <h1>Loading...</h1>
-  }
-  if (errors) {
-    return <h1>${errors.message}</h1>
-  }
+  const {create} = useLibraryApi(resource)
 
   const handleSubmit = async (data) => {
-    return await update(data);
+    await create(data);
+    doNavigate()
+  }
+
+  const doNavigate = () => {
+    navigate(`/${resource}`)
   }
 
   return (
       <div>
-
+        <h1>{displayName} create page</h1>
+        <Component handleSubmit={handleSubmit} handleCancel={doNavigate}/>
       </div>
   )
 }

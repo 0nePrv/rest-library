@@ -2,7 +2,7 @@ import {useState} from 'react';
 import axios from 'axios';
 
 // TODO change to localhost
-const BASE_API_URL = 'http://localhost:8080/api';
+const BASE_API_URL = 'http://192.168.0.106:8080/api';
 
 export const useLibraryApi = (resource = 'book') => {
   const URL_WITH_RESOURCE = `${BASE_API_URL}/${resource}`;
@@ -18,11 +18,13 @@ export const useLibraryApi = (resource = 'book') => {
   }) => {
     setLoading(true);
     try {
-      const url = `${URL_WITH_RESOURCE}${endpoint === '' ? '' : '/' + endpoint}`;
+      const url = `${URL_WITH_RESOURCE}${endpoint === '' ? '' : '/'
+          + endpoint}`;
       const response = await axios({
         url, method, params, data: payload
       });
       setData(response.data);
+      console.log(method, url, params, payload)
     } catch (err) {
       setError(err);
     } finally {
@@ -30,7 +32,7 @@ export const useLibraryApi = (resource = 'book') => {
     }
   };
 
-  const getAll = (params = {}) => fetchData(params);
+  const getAll = (params = {}) => fetchData({params});
   const get = (id, params = {}) => fetchData(
       {endpoint: id, params});
   const create = (obj) => fetchData(

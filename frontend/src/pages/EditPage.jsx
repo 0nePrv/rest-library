@@ -15,7 +15,7 @@ export const EditPage = ({
 
   const navigate = useNavigate();
 
-  const {error: errors, isLoading} = useQuery(`$update${resource}`,
+  const {error: errors, isLoading} = useQuery(['update', resource],
       () => get(id))
 
   if (isLoading) {
@@ -27,14 +27,19 @@ export const EditPage = ({
 
   const handleSubmit = async (data) => {
     await update(data);
+    doNavigate()
+  }
+
+  const doNavigate = () => {
     navigate(`/${resource}`)
   }
 
   return (
       <div>
         <h1>{displayName} edit page</h1>
-        <Component data={data} handleSubmit={handleSubmit}
-                   handleCancel={() => navigate(`/${resource}`)}/>
+        <Component data={data}
+                   handleSubmit={handleSubmit}
+                   handleCancel={doNavigate}/>
       </div>
   )
 }
