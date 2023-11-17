@@ -28,20 +28,20 @@ public class BookServiceImpl implements BookService {
 
   @Override
   @Transactional
-  public BookWithGenreAndAuthorNamesDto add(String name, long authorId, long genreId) {
+  public BookDto add(String name, long authorId, long genreId) {
     Book book = new Book().setName(name)
         .setAuthor(new Author().setId(authorId))
         .setGenre(new Genre().setId(genreId));
     Book savedBook = bookRepository.save(book);
-    return conversionService.convert(book, BookWithGenreAndAuthorNamesDto.class);
+    return conversionService.convert(savedBook, BookDto.class);
   }
 
   @Override
   @Transactional(readOnly = true)
-  public BookWithGenreAndAuthorNamesDto get(long id) {
+  public BookDto get(long id) {
     Book book = bookRepository.findById(id).orElseThrow(
         () -> new BookNotExistException("Book with id " + id + " does not exist"));
-    return conversionService.convert(book, BookWithGenreAndAuthorNamesDto.class);
+    return conversionService.convert(book, BookDto.class);
   }
 
   @Override
@@ -60,12 +60,12 @@ public class BookServiceImpl implements BookService {
 
   @Override
   @Transactional
-  public BookWithGenreAndAuthorNamesDto update(long id, String name, long authorId, long genreId) {
+  public BookDto update(long id, String name, long authorId, long genreId) {
     Book book = new Book().setId(id).setName(name)
         .setAuthor(new Author().setId(authorId))
         .setGenre(new Genre().setId(genreId));
     Book updatedBook = bookRepository.save(book);
-    return conversionService.convert(updatedBook, BookWithGenreAndAuthorNamesDto.class);
+    return conversionService.convert(updatedBook, BookDto.class);
   }
 
   @Override

@@ -8,16 +8,15 @@ import ru.otus.homework.dto.BookWithGenreAndAuthorNamesDto;
 
 public interface BookService {
 
-  BookWithGenreAndAuthorNamesDto add(String name, long authorId, long genreId);
+  BookDto add(String name, long authorId, long genreId);
 
   List<BookWithGenreAndAuthorNamesDto> getAllWithGenreAndAuthorNames();
 
-  BookWithGenreAndAuthorNamesDto get(long id);
+  BookDto get(long id);
 
-  @Transactional(readOnly = true)
   List<BookDto> getAll();
 
-  BookWithGenreAndAuthorNamesDto update(long id, String name, long authorId, long genreId);
+  BookDto update(long id, String name, long authorId, long genreId);
 
   void remove(long id);
 }

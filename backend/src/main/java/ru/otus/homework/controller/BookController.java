@@ -8,9 +8,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import ru.otus.homework.dto.BookDto;
-import ru.otus.homework.dto.BookWithGenreAndAuthorNamesDto;
 import ru.otus.homework.service.BookService;
 
 
@@ -25,22 +25,26 @@ public class BookController {
   }
 
   @PostMapping("api/book")
-  public BookWithGenreAndAuthorNamesDto add(@RequestBody BookDto book) {
+  public BookDto add(@RequestBody BookDto book) {
     return bookService.add(book.getName(), book.getAuthorId(), book.getGenreId());
   }
 
   @GetMapping("api/book")
-  public List<BookWithGenreAndAuthorNamesDto> getAll() {
-    return bookService.getAllWithGenreAndAuthorNames();
+  public List<? extends BookDto> getAll(
+      @RequestParam(value = "withRelations", required = false, defaultValue = "true") boolean withRelations) {
+    if (withRelations) {
+      return bookService.getAllWithGenreAndAuthorNames();
+    }
+    return bookService.getAll();
   }
 
   @GetMapping("/api/book/{id}")
-  public BookWithGenreAndAuthorNamesDto get(@PathVariable long id) {
+  public BookDto get(@PathVariable long id) {
     return bookService.get(id);
   }
 
   @PutMapping("api/book/{id}")
-  public BookWithGenreAndAuthorNamesDto update(@RequestBody BookDto book) {
+  public BookDto update(@RequestBody BookDto book) {
     return bookService.update(book.getId(), book.getName(), book.getAuthorId(), book.getGenreId());
   }
 

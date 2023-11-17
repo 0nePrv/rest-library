@@ -39,7 +39,7 @@ class BookControllerTest {
   private static final BookDto EXISTING_BOOK = new BookDto(1L, "Evgeniy Onegin", 1L, 1L);
 
   private static final BookWithGenreAndAuthorNamesDto EXISTING_BOOK_WITH_NAMES = new BookWithGenreAndAuthorNamesDto(
-      1L, "Evgeniy Onegin", 1L, "Evgeniy Onegin", 1L, "Novel");
+      1L, "Evgeniy Onegin", 1L, 1L, "Evgeniy Onegin", "Novel");
 
   private static final String NEW_BOOK_NAME = "A hero of our time";
 

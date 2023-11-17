@@ -6,11 +6,11 @@ import ru.otus.homework.dto.CommentWithBookNameDto;
 
 public interface CommentService {
 
-  CommentWithBookNameDto add(long bookId, String text);
+  CommentDto add(long bookId, String text);
 
-  CommentWithBookNameDto update(long id, long bookId, String text);
+  CommentDto update(long id, long bookId, String text);
 
-  CommentWithBookNameDto get(long id);
+  CommentDto get(long id);
 
   List<CommentDto> getByBookId(long bookId);
 

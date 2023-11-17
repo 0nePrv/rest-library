@@ -8,7 +8,6 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.otus.homework.domain.Book;
 import ru.otus.homework.domain.Comment;
 import ru.otus.homework.dto.CommentDto;
-import ru.otus.homework.dto.CommentWithBookNameDto;
 import ru.otus.homework.exception.CommentNotExistException;
 import ru.otus.homework.repository.CommentRepository;
 
@@ -28,18 +27,18 @@ public class CommentServiceImpl implements CommentService {
 
   @Override
   @Transactional
-  public CommentWithBookNameDto add(long bookId, String text) {
+  public CommentDto add(long bookId, String text) {
     Comment comment = new Comment().setBook(new Book().setId(bookId)).setText(text);
     Comment savedBook = commentRepository.save(comment);
-    return conversionService.convert(savedBook, CommentWithBookNameDto.class);
+    return conversionService.convert(savedBook, CommentDto.class);
   }
 
   @Override
   @Transactional(readOnly = true)
-  public CommentWithBookNameDto get(long id) {
+  public CommentDto get(long id) {
     Comment comment = commentRepository.findById(id).orElseThrow(
         () -> new CommentNotExistException("Comment with id " + id + " does not exist"));
-    return conversionService.convert(comment, CommentWithBookNameDto.class);
+    return conversionService.convert(comment, CommentDto.class);
   }
 
   @Override
@@ -51,10 +50,10 @@ public class CommentServiceImpl implements CommentService {
 
   @Override
   @Transactional
-  public CommentWithBookNameDto update(long id, long bookId, String text) {
+  public CommentDto update(long id, long bookId, String text) {
     Comment comment = new Comment().setId(id).setText(text).setBook(new Book().setId(bookId));
     Comment updatedGenre = commentRepository.save(comment);
-    return conversionService.convert(updatedGenre, CommentWithBookNameDto.class);
+    return conversionService.convert(updatedGenre, CommentDto.class);
   }
 
   @Override
