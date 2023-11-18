@@ -1,5 +1,5 @@
 import React, {useEffect} from 'react';
-import {useLibraryApi} from '../../hooks/useLibraryApi';
+import {libraryApi} from '../../api/libraryApi';
 import {useQuery} from 'react-query';
 import {Loading} from '../../ui/Loading';
 import '../../styles/form.css';
@@ -15,7 +15,7 @@ export const CommentForm = ({
   handleCancel
 }) => {
 
-  const {getAll} = useLibraryApi('book');
+  const {getAll} = libraryApi('book');
 
   const {data: books, error, isLoading} = useQuery(['getAll', 'book'],
       () => getAll({withRelations: false}));

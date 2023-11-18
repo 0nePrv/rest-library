@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.otus.homework.domain.Genre;
 import ru.otus.homework.dto.GenreDto;
-import ru.otus.homework.exception.GenreNotExistException;
+import ru.otus.homework.exception.notExist.GenreNotExistException;
 import ru.otus.homework.repository.GenreRepository;
 
 @Service

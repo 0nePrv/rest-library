@@ -13,7 +13,7 @@ public class BookToDtoWithGenreAndAuthorNamesConverter implements
   @Override
   public BookWithGenreAndAuthorNamesDto convert(@NonNull Book book) {
     return new BookWithGenreAndAuthorNamesDto(book.getId(), book.getName(),
-        book.getAuthor().getId(), book.getGenre().getId(),
-        book.getAuthor().getName(), book.getGenre().getName());
+        book.getAuthor().getId(), book.getAuthor().getName(),
+        book.getGenre().getId(), book.getGenre().getName());
   }
 }

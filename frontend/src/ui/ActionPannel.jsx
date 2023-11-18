@@ -1,11 +1,11 @@
 import '../styles/action-panel.css'
 import '../styles/button.css'
-import {useLibraryApi} from "../hooks/useLibraryApi";
+import {libraryApi} from "../api/libraryApi";
 import {useNavigate} from "react-router-dom";
 
 export const ActionPanel = ({obj, resource, refetch}) => {
 
-  const {remove} = useLibraryApi(resource);
+  const {remove} = libraryApi(resource);
 
   const navigate = useNavigate();
 

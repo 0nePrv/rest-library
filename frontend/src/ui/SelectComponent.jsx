@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useState} from "react";
 
 export const SelectComponent = ({
   title,
@@ -12,11 +12,7 @@ export const SelectComponent = ({
 
   const [valueState, setValueState] = useState(value)
 
-  useEffect(() => {
-    console.log(valueState)
-  }, [valueState]);
-  const onFormChange = (event) => {
-    let currentValue = Number.parseInt(event.target.value)
+  const onFormChange = (currentValue) => {
     setValueState(currentValue)
     callback(currentValue)
   }

@@ -3,7 +3,7 @@ import axios from 'axios';
 // TODO change to localhost
 const BASE_API_URL = 'http://192.168.0.106:8080/api';
 
-export const useLibraryApi = (resource = 'book') => {
+export const libraryApi = (resource = 'book') => {
 
   const fetchData = async ({
     endpoint = '',

@@ -3,12 +3,14 @@ package ru.otus.homework.service;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.ConversionService;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.otus.homework.domain.Book;
 import ru.otus.homework.domain.Comment;
 import ru.otus.homework.dto.CommentDto;
-import ru.otus.homework.exception.CommentNotExistException;
+import ru.otus.homework.exception.dataConsistency.CommentRelationNotExistException;
+import ru.otus.homework.exception.notExist.CommentNotExistException;
 import ru.otus.homework.repository.CommentRepository;
 
 @Service
@@ -29,8 +31,7 @@ public class CommentServiceImpl implements CommentService {
   @Transactional
   public CommentDto add(long bookId, String text) {
     Comment comment = new Comment().setBook(new Book().setId(bookId)).setText(text);
-    Comment savedBook = commentRepository.save(comment);
-    return conversionService.convert(savedBook, CommentDto.class);
+    return saveCommentOrThrowException(comment, "Book of creating comment does not exist");
   }
 
   @Override
@@ -52,13 +53,22 @@ public class CommentServiceImpl implements CommentService {
   @Transactional
   public CommentDto update(long id, long bookId, String text) {
     Comment comment = new Comment().setId(id).setText(text).setBook(new Book().setId(bookId));
-    Comment updatedGenre = commentRepository.save(comment);
-    return conversionService.convert(updatedGenre, CommentDto.class);
+    return saveCommentOrThrowException(comment, "Book of updating comment does not exist");
   }
 
   @Override
   @Transactional
   public void remove(long id) {
     commentRepository.deleteById(id);
+  }
+
+  private CommentDto saveCommentOrThrowException(Comment comment, String message) {
+    try {
+      Comment savedComment = commentRepository.save(comment);
+      return conversionService.convert(savedComment, CommentDto.class);
+    } catch (DataIntegrityViolationException exception) {
+      throw new CommentRelationNotExistException(message,
+          exception);
+    }
   }
 }

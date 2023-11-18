@@ -1,19 +1,15 @@
 package ru.otus.homework.dto;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
 public class BookDto {
 
-  private Long id;
+  private final long id;
 
-  private String name;
+  private final String name;
 
-  private Long authorId;
+  private final long authorId;
 
-  private Long genreId;
+  private final long genreId;
 }

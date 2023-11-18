@@ -1,27 +1,13 @@
 package ru.otus.homework.dto;
 
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
 public class CommentDto {
 
-  private Long id;
+  private final long id;
 
-  @NotBlank(message = "Comment text have to be not blank")
-  @Size(min = 5, max = 300, message = "Comment text size should be between 5 and 300 characters")
-  private String text;
+  private final String text;
 
-  @Min(value = 1, message = "Book in not chosen")
-  private Long bookId;
-
-  public CommentDto(long bookId) {
-    this.bookId = bookId;
-  }
+  private final long bookId;
 }

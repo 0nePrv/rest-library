@@ -1,5 +1,5 @@
 import {useQuery} from "react-query";
-import {useLibraryApi} from "../hooks/useLibraryApi";
+import {libraryApi} from "../api/libraryApi";
 import {BookDisplay} from "../model/book/BookDisplay";
 import "../styles/button.css"
 import "../styles/list.css"
@@ -13,7 +13,7 @@ export const ListPage = ({
   displayName = 'Books'
 }) => {
 
-  const {getAll} = useLibraryApi(resource);
+  const {getAll} = libraryApi(resource);
 
   const {bookId: id} = useParams()
 
@@ -49,8 +49,7 @@ export const ListPage = ({
       <div>
         <div className={"header"}>
           <h1>{displayName} page</h1>
-          <button className={"button"} title={"refresh"}
-                  onClick={() => refetch()}>
+          <button className={"button"} title={"refresh"} onClick={refetch}>
             <img src="/icons/refresh.png" alt={"refresh"}/>
           </button>
           <button className={"button"} title={"add"} onClick={processCreate}>
@@ -58,15 +57,13 @@ export const ListPage = ({
           </button>
         </div>
         <div className={"container"}>
-          {data && data.map(obj =>
+          {data ? data.map(obj =>
               <div key={obj?.id} className={"item"}>
                 <Component props={obj}/>
-                <ActionPanel obj={obj} resource={resource}
-                             refetch={() => refetch()}/>
+                <ActionPanel obj={obj} resource={resource} refetch={refetch}/>
               </div>
-          )}
+          ) : <p>{displayName} not found</p>}
         </div>
       </div>
-
   )
 }

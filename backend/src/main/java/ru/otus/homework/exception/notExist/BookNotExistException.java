@@ -1,4 +1,4 @@
-package ru.otus.homework.exception;
+package ru.otus.homework.exception.notExist;
 
 public class BookNotExistException extends NotExistException {
 

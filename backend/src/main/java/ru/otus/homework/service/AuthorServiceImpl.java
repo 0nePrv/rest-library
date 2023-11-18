@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.otus.homework.domain.Author;
 import ru.otus.homework.dto.AuthorDto;
-import ru.otus.homework.exception.AuthorNotExistException;
+import ru.otus.homework.exception.notExist.AuthorNotExistException;
 import ru.otus.homework.repository.AuthorRepository;
 
 @Service

@@ -1,7 +1,6 @@
 package ru.otus.homework.service;
 
 import java.util.List;
-import org.springframework.transaction.annotation.Transactional;
 import ru.otus.homework.dto.BookDto;
 import ru.otus.homework.dto.BookWithGenreAndAuthorNamesDto;
 

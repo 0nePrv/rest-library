@@ -1,5 +1,5 @@
 import {useNavigate, useParams} from "react-router-dom";
-import {useLibraryApi} from "../hooks/useLibraryApi";
+import {libraryApi} from "../api/libraryApi";
 import {BookForm} from "../model/book/BookForm";
 
 export const CreatePage = ({
@@ -12,7 +12,7 @@ export const CreatePage = ({
 
   const {bookId} = useParams()
 
-  const {create} = useLibraryApi(resource)
+  const {create} = libraryApi(resource)
 
   const onSubmit = async (data) => {
     await create(data);

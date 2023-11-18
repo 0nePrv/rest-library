@@ -1,6 +1,6 @@
 import {useNavigate, useParams} from "react-router-dom";
 import {useQuery} from "react-query";
-import {useLibraryApi} from "../hooks/useLibraryApi";
+import {libraryApi} from "../api/libraryApi";
 import {BookForm} from "../model/book/BookForm";
 import {Loading} from "../ui/Loading";
 
@@ -10,7 +10,7 @@ export const EditPage = ({
   displayName = 'Books'
 }) => {
 
-  const {update, get} = useLibraryApi(resource)
+  const {update, get} = libraryApi(resource)
 
   const {bookId, id} = useParams()
 

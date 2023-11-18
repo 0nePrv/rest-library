@@ -1,4 +1,4 @@
-import {useLibraryApi} from "../../hooks/useLibraryApi";
+import {libraryApi} from "../../api/libraryApi";
 import {useQuery} from "react-query";
 import '../../styles/form.css'
 import * as yup from "yup";
@@ -11,9 +11,9 @@ import {SelectComponent} from "../../ui/SelectComponent";
 
 export const BookForm = ({data: book = {}, handleSubmit, handleCancel}) => {
 
-  const {getAll: getAllGenres} = useLibraryApi('genre')
+  const {getAll: getAllGenres} = libraryApi('genre')
 
-  const {getAll: getAllAuthors} = useLibraryApi('author')
+  const {getAll: getAllAuthors} = libraryApi('author')
 
   const {
     data: authors,

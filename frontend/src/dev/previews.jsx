@@ -7,6 +7,8 @@ import {BookForm} from "../model/book/BookForm";
 import {Loading} from "../ui/Loading";
 import {Navbar} from "../ui/Navbar";
 import {SelectComponent} from "../ui/SelectComponent";
+import {TextInputComponent} from "../ui/TextInputComponent";
+import {TextAreaComponent} from "../ui/TextAreaComponent";
 
 const ComponentPreviews = () => {
   return (
@@ -32,6 +34,14 @@ const ComponentPreviews = () => {
         <ComponentPreview
             path="/SelectComponent">
           <SelectComponent/>
+        </ComponentPreview>
+        <ComponentPreview
+            path="/TextInputComponent">
+          <TextInputComponent/>
+        </ComponentPreview>
+        <ComponentPreview
+            path="/TextAreaComponent">
+          <TextAreaComponent/>
         </ComponentPreview>
       </Previews>
   )

@@ -2,7 +2,6 @@ package ru.otus.homework.service;
 
 import java.util.List;
 import ru.otus.homework.dto.CommentDto;
-import ru.otus.homework.dto.CommentWithBookNameDto;
 
 public interface CommentService {
 
