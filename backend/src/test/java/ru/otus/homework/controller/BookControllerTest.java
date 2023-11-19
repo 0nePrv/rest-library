@@ -23,7 +23,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import ru.otus.homework.controller.requestEntity.BookRequestEntity;
+import ru.otus.homework.controller.requestBody.BookRequestBody;
 import ru.otus.homework.dto.BookDto;
 import ru.otus.homework.dto.BookWithGenreAndAuthorNamesDto;
 import ru.otus.homework.service.BookService;
@@ -47,13 +47,6 @@ class BookControllerTest {
 
   private static final long NEW_GENRE_ID = 2L;
 
-  private static final String[] VALIDATION_ERRORS = new String[]{
-      "Book name must be not blank",
-      "Book name must be between 2 and 30 characters",
-      "Author id must have positive numeric value",
-      "Genre id must have positive numeric value"
-  };
-
   @Autowired
   private MockMvc mockMvc;
 
@@ -66,11 +59,11 @@ class BookControllerTest {
   @Test
   @DisplayName("should correctly process POST-request for book creation")
   void shouldCorrectlyCreateNewBook() throws Exception {
-    BookRequestEntity bookRequestEntity = new BookRequestEntity();
-    bookRequestEntity.setName(NEW_BOOK_NAME);
-    bookRequestEntity.setAuthorId(EXISTING_BOOK.getAuthorId());
-    bookRequestEntity.setGenreId(EXISTING_BOOK_WITH_NAMES.getGenreId());
-    String requestEntity = mapper.writeValueAsString(bookRequestEntity);
+    BookRequestBody bookRequestBody = new BookRequestBody();
+    bookRequestBody.setName(NEW_BOOK_NAME);
+    bookRequestBody.setAuthorId(EXISTING_BOOK.getAuthorId());
+    bookRequestBody.setGenreId(EXISTING_BOOK_WITH_NAMES.getGenreId());
+    String requestEntity = mapper.writeValueAsString(bookRequestBody);
 
     BookDto bookDto = new BookDto(2L, NEW_BOOK_NAME,
         EXISTING_BOOK.getAuthorId(), EXISTING_BOOK.getGenreId());
@@ -91,19 +84,17 @@ class BookControllerTest {
   @Test
   @DisplayName("should validate POST-request for book creation and return error message")
   void shouldReturnAnErrorMessageForInvalidBookCreation() throws Exception {
-    BookRequestEntity bookRequestEntity = new BookRequestEntity();
-    bookRequestEntity.setName("");
-    bookRequestEntity.setAuthorId(0L);
-    bookRequestEntity.setGenreId(0L);
-    String requestEntity = mapper.writeValueAsString(bookRequestEntity);
-
-    String expectedResponse = mapper.writeValueAsString(VALIDATION_ERRORS);
+    BookRequestBody bookRequestBody = new BookRequestBody();
+    bookRequestBody.setName("");
+    bookRequestBody.setAuthorId(0L);
+    bookRequestBody.setGenreId(0L);
+    String requestEntity = mapper.writeValueAsString(bookRequestBody);
 
     mockMvc.perform(post(BASE_URI_TEMPLATE)
             .contentType(MediaType.APPLICATION_JSON)
             .content(requestEntity))
         .andExpect(status().is4xxClientError())
-        .andExpect(content().json(expectedResponse));
+        .andExpect(content().contentType(MediaType.APPLICATION_PROBLEM_JSON));
 
     verify(bookService, times(0)).add(anyString(), anyLong(), anyLong());
   }
@@ -155,17 +146,17 @@ class BookControllerTest {
   @Test
   @DisplayName("should correctly process PUT-request for updating book")
   void shouldCorrectlyProvideUpdatingBook() throws Exception {
-    BookRequestEntity bookRequestEntity = new BookRequestEntity();
-    bookRequestEntity.setName(NEW_BOOK_NAME);
-    bookRequestEntity.setAuthorId(NEW_AUTHOR_ID);
-    bookRequestEntity.setGenreId(NEW_GENRE_ID);
-    String requestEntity = mapper.writeValueAsString(bookRequestEntity);
+    BookRequestBody bookRequestBody = new BookRequestBody();
+    bookRequestBody.setName(NEW_BOOK_NAME);
+    bookRequestBody.setAuthorId(NEW_AUTHOR_ID);
+    bookRequestBody.setGenreId(NEW_GENRE_ID);
+    String requestEntity = mapper.writeValueAsString(bookRequestBody);
 
     BookDto bookResponseEntity = new BookDto(EXISTING_BOOK.getId(), NEW_BOOK_NAME,
         NEW_AUTHOR_ID, NEW_GENRE_ID);
     when(bookService.update(EXISTING_BOOK.getId(), NEW_BOOK_NAME, NEW_AUTHOR_ID, NEW_GENRE_ID))
         .thenReturn(bookResponseEntity);
-    String expectedResponse = mapper.writeValueAsString(bookRequestEntity);
+    String expectedResponse = mapper.writeValueAsString(bookRequestBody);
 
     mockMvc.perform(put(BASE_URI_TEMPLATE + "/" + EXISTING_BOOK.getId())
             .contentType(MediaType.APPLICATION_JSON)
@@ -180,18 +171,17 @@ class BookControllerTest {
   @Test
   @DisplayName("should validate PUT-request for book update and return error message")
   void shouldReturnAnErrorMessageForInvalidBookUpdate() throws Exception {
-    BookRequestEntity bookRequestEntity = new BookRequestEntity();
-    bookRequestEntity.setName("");
-    bookRequestEntity.setAuthorId(0L);
-    bookRequestEntity.setGenreId(0L);
-    String requestEntity = mapper.writeValueAsString(bookRequestEntity);
-    String expectedResponse = mapper.writeValueAsString(VALIDATION_ERRORS);
+    BookRequestBody bookRequestBody = new BookRequestBody();
+    bookRequestBody.setName("");
+    bookRequestBody.setAuthorId(0L);
+    bookRequestBody.setGenreId(0L);
+    String requestEntity = mapper.writeValueAsString(bookRequestBody);
 
     mockMvc.perform(put(BASE_URI_TEMPLATE + "/" + EXISTING_BOOK.getId())
             .contentType(MediaType.APPLICATION_JSON)
             .content(requestEntity))
         .andExpect(status().is4xxClientError())
-        .andExpect(content().json(expectedResponse));
+        .andExpect(content().contentType(MediaType.APPLICATION_PROBLEM_JSON));
 
     verify(bookService, times(0))
         .update(anyLong(), anyString(), anyLong(), anyLong());

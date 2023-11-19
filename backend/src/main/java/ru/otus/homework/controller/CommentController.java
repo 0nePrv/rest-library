@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.Errors;
-import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -15,8 +14,10 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import ru.otus.homework.controller.requestEntity.CommentRequestEntity;
+import ru.otus.homework.controller.requestBody.CommentRequestBody;
+import ru.otus.homework.domain.Comment;
 import ru.otus.homework.dto.CommentDto;
+import ru.otus.homework.exception.validation.RequestBodyValidationException;
 import ru.otus.homework.service.CommentService;
 
 
@@ -31,10 +32,9 @@ public class CommentController {
   }
 
   @PostMapping("api/comment")
-  public ResponseEntity<?> add(@Valid @RequestBody CommentRequestEntity comment, Errors errors) {
+  public ResponseEntity<?> add(@Valid @RequestBody CommentRequestBody comment, Errors errors) {
     if (errors.hasErrors()) {
-      return new ResponseEntity<>(errors.getAllErrors().stream()
-          .map(ObjectError::getDefaultMessage), HttpStatus.BAD_REQUEST);
+      throw new RequestBodyValidationException(Comment.class, errors.getFieldErrors());
     }
     CommentDto commentDto = commentService.add(comment.getBookId(), comment.getText());
     return new ResponseEntity<>(commentDto, HttpStatus.CREATED);
@@ -52,10 +52,9 @@ public class CommentController {
 
   @PutMapping("api/comment/{id}")
   public ResponseEntity<?> update(@PathVariable("id") long id,
-      @Valid @RequestBody CommentRequestEntity comment, Errors errors) {
+      @Valid @RequestBody CommentRequestBody comment, Errors errors) {
     if (errors.hasErrors()) {
-      return new ResponseEntity<>(errors.getAllErrors().stream()
-          .map(ObjectError::getDefaultMessage), HttpStatus.BAD_REQUEST);
+      throw new RequestBodyValidationException(Comment.class, errors.getFieldErrors());
     }
     CommentDto commentDto = commentService.update(id, comment.getBookId(), comment.getText());
     return new ResponseEntity<>(commentDto, HttpStatus.OK);

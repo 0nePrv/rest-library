@@ -5,7 +5,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.Errors;
-import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -14,8 +13,10 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import ru.otus.homework.controller.requestEntity.BookRequestEntity;
+import ru.otus.homework.controller.requestBody.BookRequestBody;
+import ru.otus.homework.domain.Book;
 import ru.otus.homework.dto.BookDto;
+import ru.otus.homework.exception.validation.RequestBodyValidationException;
 import ru.otus.homework.service.BookService;
 
 
@@ -30,10 +31,9 @@ public class BookController {
   }
 
   @PostMapping("api/book")
-  public ResponseEntity<?> add(@Valid @RequestBody BookRequestEntity book, Errors errors) {
+  public ResponseEntity<?> add(@Valid @RequestBody BookRequestBody book, Errors errors) {
     if (errors.hasErrors()) {
-      return new ResponseEntity<>(errors.getAllErrors().stream()
-          .map(ObjectError::getDefaultMessage), HttpStatus.BAD_REQUEST);
+      throw new RequestBodyValidationException(Book.class, errors.getFieldErrors());
     }
     BookDto bookDto = bookService.add(book.getName(), book.getAuthorId(), book.getGenreId());
     return new ResponseEntity<>(bookDto, HttpStatus.CREATED);
@@ -54,10 +54,9 @@ public class BookController {
 
   @PutMapping("api/book/{id}")
   public ResponseEntity<?> update(@PathVariable("id") long id,
-      @Valid @RequestBody BookRequestEntity book, Errors errors) {
+      @Valid @RequestBody BookRequestBody book, Errors errors) {
     if (errors.hasErrors()) {
-      return new ResponseEntity<>(errors.getAllErrors().stream()
-          .map(ObjectError::getDefaultMessage), HttpStatus.BAD_REQUEST);
+      throw new RequestBodyValidationException(Book.class, errors.getFieldErrors());
     }
     BookDto bookDto = bookService.update(id, book.getName(), book.getAuthorId(),
         book.getGenreId());

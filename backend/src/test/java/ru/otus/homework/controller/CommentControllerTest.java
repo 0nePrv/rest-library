@@ -23,7 +23,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import ru.otus.homework.controller.requestEntity.CommentRequestEntity;
+import ru.otus.homework.controller.requestBody.CommentRequestBody;
 import ru.otus.homework.dto.CommentDto;
 import ru.otus.homework.service.CommentService;
 
@@ -42,12 +42,6 @@ class CommentControllerTest {
 
   private static final String NEW_COMMENT_TEXT = "New comment text";
 
-  private static final String[] VALIDATION_ERRORS = new String[]{
-      "Comment text must not be blank",
-      "Comment text size should be between 5 and 300 characters",
-      "Book id must have positive numeric value"
-  };
-
   @Autowired
   private MockMvc mockMvc;
 
@@ -60,10 +54,10 @@ class CommentControllerTest {
   @Test
   @DisplayName("should correctly process POST-request for comment creation")
   void shouldCorrectlyCreateNewComment() throws Exception {
-    CommentRequestEntity commentRequestEntity = new CommentRequestEntity();
-    commentRequestEntity.setText(EXISTING_COMMENT.getText());
-    commentRequestEntity.setBookId(EXISTING_COMMENT.getBookId());
-    String requestEntity = mapper.writeValueAsString(commentRequestEntity);
+    CommentRequestBody commentRequestBody = new CommentRequestBody();
+    commentRequestBody.setText(EXISTING_COMMENT.getText());
+    commentRequestBody.setBookId(EXISTING_COMMENT.getBookId());
+    String requestEntity = mapper.writeValueAsString(commentRequestBody);
 
     CommentDto commentDto = new CommentDto(EXISTING_COMMENT.getId(),
         EXISTING_COMMENT.getText(), EXISTING_COMMENT.getBookId());
@@ -84,18 +78,16 @@ class CommentControllerTest {
   @Test
   @DisplayName("should validate POST-request for comment creation and return error message")
   void shouldReturnAnErrorMessageForInvalidCommentCreation() throws Exception {
-    CommentRequestEntity commentRequestEntity = new CommentRequestEntity();
-    commentRequestEntity.setBookId(0L);
-    commentRequestEntity.setText("");
-    String requestEntity = mapper.writeValueAsString(commentRequestEntity);
-
-    String expectedResponse = mapper.writeValueAsString(VALIDATION_ERRORS);
+    CommentRequestBody commentRequestBody = new CommentRequestBody();
+    commentRequestBody.setBookId(0L);
+    commentRequestBody.setText("");
+    String requestEntity = mapper.writeValueAsString(commentRequestBody);
 
     mockMvc.perform(post(BASE_URI_TEMPLATE)
             .contentType(MediaType.APPLICATION_JSON)
             .content(requestEntity))
         .andExpect(status().is4xxClientError())
-        .andExpect(content().json(expectedResponse));
+        .andExpect(content().contentType(MediaType.APPLICATION_PROBLEM_JSON));
 
     verify(commentService, times(0)).add(anyLong(), anyString());
   }
@@ -131,16 +123,16 @@ class CommentControllerTest {
   @Test
   @DisplayName("should correctly process PUT-request for updating comment")
   void shouldCorrectlyProvideUpdatingComment() throws Exception {
-    CommentRequestEntity commentRequestEntity = new CommentRequestEntity();
-    commentRequestEntity.setBookId(NEW_COMMENT_BOOK_ID);
-    commentRequestEntity.setText(NEW_COMMENT_TEXT);
-    String requestEntity = mapper.writeValueAsString(commentRequestEntity);
+    CommentRequestBody commentRequestBody = new CommentRequestBody();
+    commentRequestBody.setBookId(NEW_COMMENT_BOOK_ID);
+    commentRequestBody.setText(NEW_COMMENT_TEXT);
+    String requestEntity = mapper.writeValueAsString(commentRequestBody);
 
     CommentDto commentResponseEntity = new CommentDto(EXISTING_COMMENT.getId(),
         NEW_COMMENT_TEXT, NEW_COMMENT_BOOK_ID);
     when(commentService.update(EXISTING_COMMENT.getId(), NEW_COMMENT_BOOK_ID, NEW_COMMENT_TEXT))
         .thenReturn(commentResponseEntity);
-    String responseEntity = mapper.writeValueAsString(commentRequestEntity);
+    String responseEntity = mapper.writeValueAsString(commentRequestBody);
 
     mockMvc.perform(put(BASE_URI_TEMPLATE + "/" + EXISTING_COMMENT.getId())
             .contentType(MediaType.APPLICATION_JSON)
@@ -155,18 +147,16 @@ class CommentControllerTest {
   @Test
   @DisplayName("should validate PUT-request for comment update and return error message")
   void shouldReturnAnErrorMessageForInvalidCommentUpdate() throws Exception {
-    CommentRequestEntity commentRequestEntity = new CommentRequestEntity();
-    commentRequestEntity.setBookId(0L);
-    commentRequestEntity.setText("");
-    String requestEntity = mapper.writeValueAsString(commentRequestEntity);
-
-    String expectedResponse = mapper.writeValueAsString(VALIDATION_ERRORS);
+    CommentRequestBody commentRequestBody = new CommentRequestBody();
+    commentRequestBody.setBookId(0L);
+    commentRequestBody.setText("");
+    String requestEntity = mapper.writeValueAsString(commentRequestBody);
 
     mockMvc.perform(put(BASE_URI_TEMPLATE + "/" + EXISTING_COMMENT.getId())
             .contentType(MediaType.APPLICATION_JSON)
             .content(requestEntity))
         .andExpect(status().is4xxClientError())
-        .andExpect(content().json(expectedResponse));
+        .andExpect(content().contentType(MediaType.APPLICATION_PROBLEM_JSON));
 
     verify(commentService, times(0))
         .update(anyLong(), anyLong(), anyString());

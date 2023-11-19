@@ -1,11 +1,11 @@
-package ru.otus.homework.controller.requestEntity;
+package ru.otus.homework.controller.requestBody;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 @Data
-public class GenreRequestEntity {
+public class GenreRequestBody {
 
   @NotBlank(message = "Genre name must be not blank")
   @Size(min = 4, max = 30, message = "Genre name must be between 2 and 30 characters")

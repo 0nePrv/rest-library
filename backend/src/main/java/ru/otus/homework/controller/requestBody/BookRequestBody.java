@@ -1,4 +1,4 @@
-package ru.otus.homework.controller.requestEntity;
+package ru.otus.homework.controller.requestBody;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -7,7 +7,7 @@ import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 @Data
-public class BookRequestEntity {
+public class BookRequestBody {
 
   @NotBlank(message = "Book name must be not blank")
   @Size(min = 2, max = 50, message = "Book name must be between 2 and 30 characters")

@@ -22,7 +22,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import ru.otus.homework.controller.requestEntity.AuthorRequestEntity;
+import ru.otus.homework.controller.requestBody.AuthorRequestBody;
 import ru.otus.homework.dto.AuthorDto;
 import ru.otus.homework.service.AuthorService;
 
@@ -36,11 +36,6 @@ class AuthorControllerTest {
 
   private static final String NEW_AUTHOR_NAME = "Lermontov";
 
-  private static final String[] VALIDATION_ERRORS = new String[]{
-      "Author name must be not blank",
-      "Author name must be between 2 and 30 characters"
-  };
-
   @Autowired
   private MockMvc mockMvc;
 
@@ -53,9 +48,9 @@ class AuthorControllerTest {
   @Test
   @DisplayName("should correctly process POST-request for author creation")
   void shouldCorrectlyCreateNewAuthor() throws Exception {
-    AuthorRequestEntity authorRequestEntity = new AuthorRequestEntity();
-    authorRequestEntity.setName(NEW_AUTHOR_NAME);
-    String requestEntity = mapper.writeValueAsString(authorRequestEntity);
+    AuthorRequestBody authorRequestBody = new AuthorRequestBody();
+    authorRequestBody.setName(NEW_AUTHOR_NAME);
+    String requestEntity = mapper.writeValueAsString(authorRequestBody);
 
     AuthorDto authorDto = new AuthorDto(2L, NEW_AUTHOR_NAME);
     when(authorService.add(authorDto.getName())).thenReturn(authorDto);
@@ -73,17 +68,15 @@ class AuthorControllerTest {
   @Test
   @DisplayName("should validate POST-request for author creation and return error message")
   void shouldReturnAnErrorMessageForInvalidAuthorCreation() throws Exception {
-    AuthorRequestEntity authorRequestEntity = new AuthorRequestEntity();
-    authorRequestEntity.setName("");
-    String requestEntity = mapper.writeValueAsString(authorRequestEntity);
-
-    String expectedResponse = mapper.writeValueAsString(VALIDATION_ERRORS);
+    AuthorRequestBody authorRequestBody = new AuthorRequestBody();
+    authorRequestBody.setName("");
+    String requestEntity = mapper.writeValueAsString(authorRequestBody);
 
     mockMvc.perform(post(BASE_URI_TEMPLATE)
             .contentType(MediaType.APPLICATION_JSON)
             .content(requestEntity))
         .andExpect(status().is4xxClientError())
-        .andExpect(content().json(expectedResponse));
+        .andExpect(content().contentType(MediaType.APPLICATION_PROBLEM_JSON));
 
     verify(authorService, times(0)).add(anyString());
   }
@@ -118,9 +111,9 @@ class AuthorControllerTest {
   @Test
   @DisplayName("should correctly process PUT-request for updating author")
   void shouldCorrectlyProvideUpdatingAuthor() throws Exception {
-    AuthorRequestEntity authorRequestEntity = new AuthorRequestEntity();
-    authorRequestEntity.setName(NEW_AUTHOR_NAME);
-    String requestEntity = mapper.writeValueAsString(authorRequestEntity);
+    AuthorRequestBody authorRequestBody = new AuthorRequestBody();
+    authorRequestBody.setName(NEW_AUTHOR_NAME);
+    String requestEntity = mapper.writeValueAsString(authorRequestBody);
 
     AuthorDto authorResponseEntity = new AuthorDto(EXISTING_AUTHOR.getId(), NEW_AUTHOR_NAME);
     when(authorService.update(EXISTING_AUTHOR.getId(), NEW_AUTHOR_NAME))
@@ -140,17 +133,15 @@ class AuthorControllerTest {
   @Test
   @DisplayName("should validate PUT-request for author update and return error message")
   void shouldReturnAnErrorMessageForInvalidAuthorUpdate() throws Exception {
-    AuthorRequestEntity authorRequestEntity = new AuthorRequestEntity();
-    authorRequestEntity.setName("");
-    String requestEntity = mapper.writeValueAsString(authorRequestEntity);
-
-    String expectedResponse = mapper.writeValueAsString(VALIDATION_ERRORS);
+    AuthorRequestBody authorRequestBody = new AuthorRequestBody();
+    authorRequestBody.setName("");
+    String requestEntity = mapper.writeValueAsString(authorRequestBody);
 
     mockMvc.perform(put(BASE_URI_TEMPLATE + "/" + EXISTING_AUTHOR.getId())
             .contentType(MediaType.APPLICATION_JSON)
             .content(requestEntity))
         .andExpect(status().is4xxClientError())
-        .andExpect(content().json(expectedResponse));
+        .andExpect(content().contentType(MediaType.APPLICATION_PROBLEM_JSON));
 
     verify(authorService, times(0)).update(anyLong(), anyString());
   }

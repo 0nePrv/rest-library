@@ -22,7 +22,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import ru.otus.homework.controller.requestEntity.GenreRequestEntity;
+import ru.otus.homework.controller.requestBody.GenreRequestBody;
 import ru.otus.homework.dto.GenreDto;
 import ru.otus.homework.service.GenreService;
 
@@ -35,11 +35,6 @@ class GenreControllerTest {
   private static final GenreDto EXISTING_GENRE = new GenreDto(1L, "Drama");
 
   private static final String NEW_GENRE_NAME = "Novel";
-
-  private static final String[] VALIDATION_ERRORS = new String[]{
-      "Genre name must be not blank",
-      "Genre name must be between 2 and 30 characters"
-  };
 
   @Autowired
   private MockMvc mockMvc;
@@ -54,11 +49,11 @@ class GenreControllerTest {
   @DisplayName("should correctly process POST-request for genre creation")
   void shouldCorrectlyCreateNewGenre() throws Exception {
     GenreDto genreDto = new GenreDto(1, NEW_GENRE_NAME);
-    GenreRequestEntity genreRequestEntity = new GenreRequestEntity();
-    genreRequestEntity.setName(NEW_GENRE_NAME);
+    GenreRequestBody genreRequestBody = new GenreRequestBody();
+    genreRequestBody.setName(NEW_GENRE_NAME);
 
     when(genreService.add(genreDto.getName())).thenReturn(genreDto);
-    String requestEntity = mapper.writeValueAsString(genreRequestEntity);
+    String requestEntity = mapper.writeValueAsString(genreRequestBody);
     String expectedResult = mapper.writeValueAsString(genreDto);
 
     mockMvc.perform(post(BASE_URI_TEMPLATE)
@@ -73,16 +68,15 @@ class GenreControllerTest {
   @Test
   @DisplayName("should validate POST-request for genre creation and return error message")
   void shouldReturnAnErrorMessageForInvalidGenreCreation() throws Exception {
-    GenreRequestEntity genreRequestEntity = new GenreRequestEntity();
-    genreRequestEntity.setName("");
-    String requestEntity = mapper.writeValueAsString(genreRequestEntity);
-    String expectedResponse = mapper.writeValueAsString(VALIDATION_ERRORS);
+    GenreRequestBody genreRequestBody = new GenreRequestBody();
+    genreRequestBody.setName("");
+    String requestEntity = mapper.writeValueAsString(genreRequestBody);
 
     mockMvc.perform(post(BASE_URI_TEMPLATE)
             .contentType(MediaType.APPLICATION_JSON)
             .content(requestEntity))
         .andExpect(status().is4xxClientError())
-        .andExpect(content().json(expectedResponse));
+        .andExpect(content().contentType(MediaType.APPLICATION_PROBLEM_JSON));
 
     verify(genreService, times(0)).add(anyString());
   }
@@ -117,9 +111,9 @@ class GenreControllerTest {
   @Test
   @DisplayName("should correctly process PUT-request for updating genre")
   void shouldCorrectlyProvideUpdatingGenre() throws Exception {
-    GenreRequestEntity genreRequestEntity = new GenreRequestEntity();
-    genreRequestEntity.setName(NEW_GENRE_NAME);
-    String requestEntity = mapper.writeValueAsString(genreRequestEntity);
+    GenreRequestBody genreRequestBody = new GenreRequestBody();
+    genreRequestBody.setName(NEW_GENRE_NAME);
+    String requestEntity = mapper.writeValueAsString(genreRequestBody);
 
     GenreDto genreDto = new GenreDto(EXISTING_GENRE.getId(), NEW_GENRE_NAME);
     when(genreService.update(EXISTING_GENRE.getId(), NEW_GENRE_NAME))
@@ -139,16 +133,15 @@ class GenreControllerTest {
   @Test
   @DisplayName("should validate PUT-request for genre update and return error message")
   void shouldReturnAnErrorMessageForInvalidGenreUpdate() throws Exception {
-    GenreRequestEntity genreRequestEntity = new GenreRequestEntity();
-    genreRequestEntity.setName("");
-    String requestEntity = mapper.writeValueAsString(genreRequestEntity);
-    String expectedResponse = mapper.writeValueAsString(VALIDATION_ERRORS);
+    GenreRequestBody genreRequestBody = new GenreRequestBody();
+    genreRequestBody.setName("");
+    String requestEntity = mapper.writeValueAsString(genreRequestBody);
 
     mockMvc.perform(put(BASE_URI_TEMPLATE + "/" + EXISTING_GENRE.getId())
             .contentType(MediaType.APPLICATION_JSON)
             .content(requestEntity))
         .andExpect(status().is4xxClientError())
-        .andExpect(content().json(expectedResponse));
+        .andExpect(content().contentType(MediaType.APPLICATION_PROBLEM_JSON));
 
     verify(genreService, times(0)).update(anyLong(), anyString());
   }
