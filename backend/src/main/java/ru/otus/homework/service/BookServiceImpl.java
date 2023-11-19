@@ -3,7 +3,7 @@ package ru.otus.homework.service;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.ConversionService;
-import org.springframework.dao.DataAccessException;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.otus.homework.domain.Author;
@@ -34,7 +34,13 @@ public class BookServiceImpl implements BookService {
     Book book = new Book().setName(name)
         .setAuthor(new Author().setId(authorId))
         .setGenre(new Genre().setId(genreId));
-    return saveBookOrThrowException(book, "Author or genre of new book does not exist");
+    try {
+      Book savedBook = bookRepository.save(book);
+      return conversionService.convert(savedBook, BookDto.class);
+    } catch (DataIntegrityViolationException exception) {
+      throw new BookRelationNotExistException("Author or genre of new book does not exist",
+          exception);
+    }
   }
 
   @Override
@@ -65,21 +71,18 @@ public class BookServiceImpl implements BookService {
     Book book = new Book().setId(id).setName(name)
         .setAuthor(new Author().setId(authorId))
         .setGenre(new Genre().setId(genreId));
-    return saveBookOrThrowException(book, "Author or genre of updating book does not exist");
+    try {
+      Book savedBook = bookRepository.saveAndFlush(book);
+      return conversionService.convert(savedBook, BookDto.class);
+    } catch (DataIntegrityViolationException exception) {
+      throw new BookRelationNotExistException("Author or genre of updating book does not exist",
+          exception);
+    }
   }
 
   @Override
   @Transactional
   public void remove(long id) {
     bookRepository.deleteById(id);
-  }
-
-  private BookDto saveBookOrThrowException(Book book, String message) {
-    try {
-      Book savedBook = bookRepository.save(book);
-      return conversionService.convert(savedBook, BookDto.class);
-    } catch (DataAccessException exception) {
-      throw new BookRelationNotExistException(message, exception);
-    }
   }
 }

@@ -31,7 +31,13 @@ public class CommentServiceImpl implements CommentService {
   @Transactional
   public CommentDto add(long bookId, String text) {
     Comment comment = new Comment().setBook(new Book().setId(bookId)).setText(text);
-    return saveCommentOrThrowException(comment, "Book of creating comment does not exist");
+    try {
+      Comment savedComment = commentRepository.save(comment);
+      return conversionService.convert(savedComment, CommentDto.class);
+    } catch (DataIntegrityViolationException exception) {
+      throw new CommentRelationNotExistException("Book of creating comment does not exist",
+          exception);
+    }
   }
 
   @Override
@@ -53,22 +59,18 @@ public class CommentServiceImpl implements CommentService {
   @Transactional
   public CommentDto update(long id, long bookId, String text) {
     Comment comment = new Comment().setId(id).setText(text).setBook(new Book().setId(bookId));
-    return saveCommentOrThrowException(comment, "Book of updating comment does not exist");
+    try {
+      Comment savedComment = commentRepository.saveAndFlush(comment);
+      return conversionService.convert(savedComment, CommentDto.class);
+    } catch (DataIntegrityViolationException exception) {
+      throw new CommentRelationNotExistException("Book of updating comment does not exist",
+          exception);
+    }
   }
 
   @Override
   @Transactional
   public void remove(long id) {
     commentRepository.deleteById(id);
-  }
-
-  private CommentDto saveCommentOrThrowException(Comment comment, String message) {
-    try {
-      Comment savedComment = commentRepository.save(comment);
-      return conversionService.convert(savedComment, CommentDto.class);
-    } catch (DataIntegrityViolationException exception) {
-      throw new CommentRelationNotExistException(message,
-          exception);
-    }
   }
 }
