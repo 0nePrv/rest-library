@@ -18,7 +18,7 @@ export const CommentForm = ({
   const {getAll} = libraryApi('book');
 
   const {data: books, error, isLoading} = useQuery(['getAll', 'book'],
-      () => getAll({withRelations: false}));
+      () => getAll({params: {withRelations: false}}));
 
   const schema = yup.object().shape({
     text: yup
@@ -52,7 +52,7 @@ export const CommentForm = ({
   }
 
   if (error) {
-    return <h1>${error.message}</h1>
+    return <h1>{error.message}</h1>
   }
 
   const processForm = async (data) => {
@@ -60,7 +60,8 @@ export const CommentForm = ({
   };
 
   return (
-      <form className={'form-container'} onSubmit={onFormSubmit(processForm)}>
+      <form className={'form-container'}
+            onSubmit={onFormSubmit(processForm)}>
         <TextAreaComponent
             title={'Text'}
             value={getValues().text}

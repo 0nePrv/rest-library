@@ -8,10 +8,10 @@ export const TextAreaComponent = ({
   errors
 }) => (
     <div className="row" id={`${title} text input row`}>
-      <label htmlFor={`${title} text input`}>{title}:</label>
+      <label htmlFor={`${title} text area`}>{title}:</label>
       <textarea
           autoComplete='on'
-          id={`${title} text input`}
+          id={`${title} text area`}
           placeholder={value}
           defaultValue={value}
           onChange={callback}

@@ -16,27 +16,57 @@ export const BookRoutes = () => {
     Display: BookDisplay
   }
 
+  const commentRoute = {
+    resource: 'comment',
+    name: 'Comments',
+    Form: CommentForm,
+    Display: CommentDisplay
+  }
+
   return (
       <Routes>
         <Route path={'/'} element={
-          <ListPage Component={route.Display} displayName={route.name}
-                    resource={route.resource}/>}/>
+          <ListPage Component={route.Display}
+                    displayName={route.name}
+                    resource={route.resource}/>
+        }
+        />
         <Route path={'/edit/:id'} element={
-          <EditPage Component={route.Form} displayName={route.name}
-                    resource={route.resource}/>}/>
-        <Route path={'/new'} element={
-          <CreatePage Component={route.Form} displayName={route.name}
-                      resource={route.resource}/>}/>
+          <EditPage Component={route.Form}
+                    displayName={route.name}
+                    resource={route.resource}/>
+        }
+        />
+        <Route path={'/new'}
+               element={
+                 <CreatePage Component={route.Form}
+                             displayName={route.name}
+                             resource={route.resource}/>
+               }
+        />
 
-        <Route path={'/:bookId/comment'} element={
-          <ListPage Component={CommentDisplay} displayName={'Comments'}
-                    resource={'comment'}/>}/>
-        <Route path={'/:bookId/comment/edit/:id'} element={
-          <EditPage Component={CommentForm} displayName={'Comments'}
-                    resource={'comment'}/>}/>
-        <Route path={'/:bookId/comment/new'} element={
-          <CreatePage Component={CommentForm} displayName={'Comments'}
-                      resource={'comment'}/>}/>
+        <Route path={`/:bookId/${commentRoute.resource}`}
+               element={
+                 <ListPage Component={commentRoute.Display}
+                           displayName={commentRoute.name}
+                           resource={commentRoute.resource}/>
+               }
+        />
+        <Route path={`/:bookId/${commentRoute.resource}/edit/:id`}
+               element={
+                 <EditPage Component={commentRoute.Form}
+                           displayName={commentRoute.name}
+                           resource={commentRoute.resource}/>
+               }
+        />
+        <Route path={`/:bookId/${commentRoute.resource}/new`}
+               element={
+                 <CreatePage Component={commentRoute.Form}
+                             displayName={commentRoute.name}
+                             resource={commentRoute.resource}/>
+               }
+        />
+
         <Route path={'/*'} element={<h1>Page not found</h1>}/>
       </Routes>
   )

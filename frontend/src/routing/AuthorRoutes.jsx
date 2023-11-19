@@ -16,15 +16,29 @@ export const AuthorRoutes = () => {
 
   return (
       <Routes>
-        <Route path={'/'} element={
-          <ListPage Component={route.Display} displayName={route.name}
-                    resource={route.resource}/>}/>
-        <Route path={'/edit/:id'} element={
-          <EditPage Component={route.Form} displayName={route.name}
-                    resource={route.resource}/>}/>
-        <Route path={'/new'} element={
-          <CreatePage Component={route.Form} displayName={route.name}
-                      resource={route.resource}/>}/>
+        <Route path={'/'}
+               element={
+                 <ListPage Component={route.Display}
+                           displayName={route.name}
+                           resource={route.resource}/>
+               }
+        />
+        <Route path={'/edit/:id'}
+               element={
+                 <EditPage Component={route.Form}
+                           displayName={route.name}
+                           resource={route.resource}
+                 />
+               }
+        />
+        <Route path={'/new'}
+               element={
+                 <CreatePage Component={route.Form}
+                             displayName={route.name}
+                             resource={route.resource}/>
+               }
+        />
+
         <Route path={'/*'} element={<h1>Page not found</h1>}/>
       </Routes>
   )

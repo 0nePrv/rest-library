@@ -4,7 +4,7 @@ import '../../styles/button.css'
 
 export const BookDisplay = ({props: book}) => {
 
-  const navigation = useNavigate();
+  const navigate = useNavigate();
 
   return (
       <div className={"book-item"} key={book.id}>
@@ -14,7 +14,7 @@ export const BookDisplay = ({props: book}) => {
           <p>{book?.genreName}</p>
         </div>
         <button className={"button"}
-                onClick={() => navigation(`/book/${book.id}/comment`)}>
+                onClick={() => navigate(`/book/${book.id}/comment`)}>
           See comments
         </button>
       </div>

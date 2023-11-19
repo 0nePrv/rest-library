@@ -13,14 +13,17 @@ export const ListPage = ({
   displayName = 'Books'
 }) => {
 
-  const {getAll} = libraryApi(resource);
+  const {remove, getAll} = libraryApi(resource);
 
-  const {bookId: id} = useParams()
+  const {bookId} = useParams()
 
   const navigate = useNavigate()
 
   const doQuery = () => {
-    return getAll(resource === 'comment' && id && {bookId: id})
+    if (resource === 'comment' && bookId) {
+      return getAll({params: {bookId}})
+    }
+    return getAll({})
   }
 
   const {
@@ -37,12 +40,25 @@ export const ListPage = ({
     return <h1>{error.message}</h1>
   }
 
-  const processCreate = () => {
-    if (resource === 'comment' && id) {
-      navigate(`/book/${id}/comment/new`)
+  const onCreate = () => {
+    if (resource === 'comment') {
+      navigate(`/book/${bookId}/comment/new`)
     } else {
       navigate(`/${resource}/new`)
     }
+  }
+
+  const onEdit = (obj) => {
+    if (resource === 'comment') {
+      navigate(`/book/${obj.bookId}/comment/edit/${obj.id}`)
+    } else {
+      navigate(`/${resource}/edit/${obj.id}`)
+    }
+  }
+
+  const onDelete = async (obj) => {
+    await remove({id: obj.id});
+    await refetch();
   }
 
   return (
@@ -52,7 +68,7 @@ export const ListPage = ({
           <button className={"button"} title={"refresh"} onClick={refetch}>
             <img src="/icons/refresh.png" alt={"refresh"}/>
           </button>
-          <button className={"button"} title={"add"} onClick={processCreate}>
+          <button className={"button"} title={"add"} onClick={onCreate}>
             <img src={"/icons/plus.png"} alt={"new"}/>
           </button>
         </div>
@@ -60,7 +76,9 @@ export const ListPage = ({
           {data ? data.map(obj =>
               <div key={obj?.id} className={"item"}>
                 <Component props={obj}/>
-                <ActionPanel obj={obj} resource={resource} refetch={refetch}/>
+                <ActionPanel obj={obj}
+                             handleUpdate={() => onEdit(obj)}
+                             handleDelete={() => onDelete(obj)}/>
               </div>
           ) : <p>{displayName} not found</p>}
         </div>

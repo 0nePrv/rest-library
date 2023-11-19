@@ -1,34 +1,24 @@
 import '../styles/action-panel.css'
 import '../styles/button.css'
-import {libraryApi} from "../api/libraryApi";
-import {useNavigate} from "react-router-dom";
 
-export const ActionPanel = ({obj, resource, refetch}) => {
+export const ActionPanel = ({handleUpdate, handleDelete}) => {
 
-  const {remove} = libraryApi(resource);
+  const onDelete = (e) => {
+    e.preventDefault()
+    handleDelete()
+  }
 
-  const navigate = useNavigate();
-
-  const handleDelete = async (e) => {
-    e.preventDefault();
-    await remove(obj.id);
-    refetch();
-  };
-
-  const handleEdit = () => {
-    if (resource === 'comment') {
-      navigate(`/book/${obj.bookId}/comment/edit/${obj.id}`)
-    } else {
-      navigate(`/${resource}/edit/${obj.id}`)
-    }
+  const onUpdate = (e) => {
+    e.preventDefault()
+    handleUpdate()
   }
 
   return (
       <div className="action-panel">
-        <button className={"button update-button"} onClick={handleEdit}>
+        <button className={"button update-button"} onClick={onUpdate}>
           <img src="/icons/edit.png" alt="edit"/>
         </button>
-        <button className="button delete-button" onClick={handleDelete}>
+        <button className="button delete-button" onClick={onDelete}>
           <img src="/icons/delete.png" alt="Delete"/>
         </button>
       </div>

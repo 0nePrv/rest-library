@@ -16,17 +16,18 @@ export const EditPage = ({
 
   const navigate = useNavigate();
 
-  const {data, error, isLoading} = useQuery(['update', resource], () => get(id))
+  const {data, error, isLoading} = useQuery(['update', resource],
+      () => get({id}))
 
   if (isLoading) {
     return <Loading/>
   }
   if (error) {
-    return <h1>${error.message}</h1>
+    return <h1>{error.message}</h1>
   }
 
   const handleSubmit = async (data) => {
-    await update(data)
+    await update({id: data.id, payload: data})
     doNavigate(data)
   }
 

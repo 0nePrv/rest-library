@@ -9,23 +9,27 @@ import {Loading} from "../../ui/Loading";
 import {TextInputComponent} from "../../ui/TextInputComponent";
 import {SelectComponent} from "../../ui/SelectComponent";
 
-export const BookForm = ({data: book = {}, handleSubmit, handleCancel}) => {
-
-  const {getAll: getAllGenres} = libraryApi('genre')
+export const BookForm = ({
+  data: book = {},
+  handleSubmit,
+  handleCancel
+}) => {
 
   const {getAll: getAllAuthors} = libraryApi('author')
+
+  const {getAll: getAllGenres} = libraryApi('genre')
 
   const {
     data: authors,
     isLoading: authorsIsLoading,
     error: authorsError
-  } = useQuery(['getAll', 'author'], () => getAllAuthors())
+  } = useQuery(['getAll', 'author'], () => getAllAuthors({}))
 
   const {
     data: genres,
     isLoading: genresIsLoading,
     error: genresError
-  } = useQuery(['getAll', 'genre'], () => getAllGenres())
+  } = useQuery(['getAll', 'genre'], () => getAllGenres({}))
 
   const schema = yup.object().shape({
     name: yup
@@ -39,11 +43,11 @@ export const BookForm = ({data: book = {}, handleSubmit, handleCancel}) => {
   });
 
   const {
-    formState,
+    register,
+    handleSubmit: onFormSubmit,
     setValue,
     getValues,
-    register,
-    handleSubmit: onFormSubmit
+    formState
   } = useForm({
     resolver: yupResolver(schema)
   })
@@ -61,8 +65,8 @@ export const BookForm = ({data: book = {}, handleSubmit, handleCancel}) => {
   if (authorsError || genresError) {
     return (
         <div>
-          <h1>{authorsError.message}</h1>
-          <h1>{genresError.message}</h1>
+          {authorsError && <h1>{authorsError.message}</h1>}
+          {genresError && <h1>{genresError.message}</h1>}
         </div>
     );
   }
@@ -81,26 +85,28 @@ export const BookForm = ({data: book = {}, handleSubmit, handleCancel}) => {
             onSubmit={onFormSubmit(processForm)}>
         <TextInputComponent
             title={'Name'}
-            value={getValues().name}
+            value={getValues()?.name}
             callback={(name) => setValue('name', name)}
             register={register('name')}
             errors={formState.errors.name?.message}
         />
         <SelectComponent
             title={'Author'}
-            value={getValues().authorId}
+            value={getValues()?.authorId}
             callback={(id) => setValue('authorId', id)}
             register={register('authorId')}
             errors={formState.errors.authorId?.message}
-            items={authors} displayField={'name'}
+            items={authors}
+            displayField={'name'}
         />
         <SelectComponent
             title={'Gerne'}
-            value={getValues().genreId}
+            value={getValues()?.genreId}
             callback={(id) => setValue('genreId', id)}
             register={register('genreId')}
             errors={formState.errors.genreId?.message}
-            items={genres} displayField={'name'}
+            items={genres}
+            displayField={'name'}
         />
         <div className="row">
           <input type="submit" value="Submit"/>

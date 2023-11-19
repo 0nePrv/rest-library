@@ -6,6 +6,7 @@ import {useForm} from 'react-hook-form';
 import {yupResolver} from '@hookform/resolvers/yup';
 
 export const GenreForm = ({data: genre = {}, handleSubmit, handleCancel}) => {
+
   const schema = yup.object().shape({
     name: yup
     .string()

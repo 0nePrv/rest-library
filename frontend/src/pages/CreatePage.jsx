@@ -15,16 +15,15 @@ export const CreatePage = ({
   const {create} = libraryApi(resource)
 
   const onSubmit = async (data) => {
-    await create(data);
+    await create({payload: data});
     if (resource === 'comment') {
       navigate(`/book/${data?.bookId || bookId}/comment`)
-      console.log(data?.bookId)
     } else {
       navigate(`/${resource}`)
     }
   }
 
-  const doNavigate = () => {
+  const onCancel = () => {
     if (resource === 'comment') {
       navigate(`/book/${bookId}/comment`)
     } else {
@@ -35,7 +34,7 @@ export const CreatePage = ({
   return (
       <div>
         <h1>{displayName} create page</h1>
-        <Component handleSubmit={onSubmit} handleCancel={doNavigate}/>
+        <Component handleSubmit={onSubmit} handleCancel={onCancel}/>
       </div>
   )
 }

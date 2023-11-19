@@ -12,7 +12,8 @@ export const SelectComponent = ({
 
   const [valueState, setValueState] = useState(value)
 
-  const onFormChange = (currentValue) => {
+  const onFormChange = (e) => {
+    const currentValue = Number.parseInt(e.target.value)
     setValueState(currentValue)
     callback(currentValue)
   }
