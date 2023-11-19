@@ -17,7 +17,7 @@ public class BookRequestEntity {
   @Positive(message = "Author id must have positive numeric value")
   private Long authorId;
 
-  @NotNull(message = "Author is not present")
+  @NotNull(message = "Genre is not present")
   @Positive(message = "Genre id must have positive numeric value")
   private Long genreId;
 }
