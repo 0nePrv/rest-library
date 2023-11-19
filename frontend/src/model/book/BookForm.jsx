@@ -35,7 +35,7 @@ export const BookForm = ({
     name: yup
     .string().required('Name is required')
     .min(2, 'Name is too short')
-    .max(30, 'Name is too long'),
+    .max(50, 'Name is too long'),
     authorId: yup.number().required('Author is required')
     .min(1, 'Author is not chosen'),
     genreId: yup.number().required('Genre is required')

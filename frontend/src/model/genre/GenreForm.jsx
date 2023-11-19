@@ -11,7 +11,7 @@ export const GenreForm = ({data: genre = {}, handleSubmit, handleCancel}) => {
     name: yup
     .string()
     .required('Name is required')
-    .min(5, 'Name too short')
+    .min(4, 'Name too short')
     .max(30, 'Name too long'),
   });
 
