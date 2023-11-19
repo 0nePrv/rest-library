@@ -1,23 +1,33 @@
-import React from 'react';
+import React from 'react'
 
 export const TextInputComponent = ({
   title,
-  value,
+  state,
   callback,
   register,
   errors,
-}) => (
-    <div className="row" id={`${title} text input row`}>
-      <label htmlFor={`${title} text input`}>{title}:</label>
-      <input
-          autoComplete='on'
-          type="text"
-          id={`${title} text input`}
-          placeholder={value}
-          defaultValue={value}
-          onChange={callback}
-          {...register}
-      />
-      {errors && <p className='validation-errors'>{errors}</p>}
-    </div>
-);
+}) => {
+
+  const initState = state ?? ''
+
+  const onValueChange = (e) => {
+    console.log('select value changing... ', e.target.value)
+    callback(e.target.value)
+  }
+
+  return (
+      <div className="row" id={`${title} text input row`}>
+        <label htmlFor={`${title} text input`}>{title}:</label>
+        <input
+            autoComplete='on'
+            type="text"
+            id={`${title} text input`}
+            placeholder={initState}
+            value={state}
+            onChange={event => onValueChange(event)}
+            {...register}
+        />
+        {errors && <p className='validation-errors'>{errors}</p>}
+      </div>
+  )
+}

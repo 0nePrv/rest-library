@@ -1,3 +1,4 @@
+import React from "react"
 import styles from './App.module.css';
 import {Routing} from "./routing/Routing";
 import {QueryClient, QueryClientProvider} from "react-query";

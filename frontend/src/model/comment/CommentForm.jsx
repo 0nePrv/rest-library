@@ -8,6 +8,7 @@ import {useForm} from 'react-hook-form';
 import {yupResolver} from '@hookform/resolvers/yup';
 import {TextAreaComponent} from '../../ui/TextAreaComponent';
 import {SelectComponent} from '../../ui/SelectComponent';
+import {ErrorDisplay} from "../../ui/ErrorDisplay";
 
 export const CommentForm = ({
   data: comment = {},
@@ -15,10 +16,10 @@ export const CommentForm = ({
   handleCancel
 }) => {
 
-  const {getAll} = libraryApi('book');
+  const {getAll} = libraryApi('book')
 
   const {data: books, error, isLoading} = useQuery(['getAll', 'book'],
-      () => getAll({params: {withRelations: false}}));
+      () => getAll({params: {withRelations: false}}))
 
   const schema = yup.object().shape({
     text: yup
@@ -36,42 +37,43 @@ export const CommentForm = ({
     register,
     handleSubmit: onFormSubmit,
     setValue,
-    getValues,
-    formState
+    formState,
+      watch
   } = useForm({
     resolver: yupResolver(schema)
-  });
+  })
 
   useEffect(() => {
-    setValue('text', comment?.text || '')
-    setValue('bookId', comment?.bookId || 0)
+    setValue('text', comment?.text ?? '')
+    setValue('bookId', comment?.bookId ?? 0)
   }, [comment?.text, comment?.bookId, setValue])
+
+  const processForm = async (data) => {
+    await handleSubmit({...comment, text: data.text, bookId: data.bookId})
+  }
 
   if (isLoading) {
     return <Loading/>
   }
 
   if (error) {
-    return <h1>{error.message}</h1>
+    return <ErrorDisplay error={error}/>
   }
 
-  const processForm = async (data) => {
-    await handleSubmit({...comment, text: data.text, bookId: data.bookId})
-  };
-
+  // noinspection JSCheckFunctionSignatures
   return (
       <form className={'form-container'}
             onSubmit={onFormSubmit(processForm)}>
         <TextAreaComponent
             title={'Text'}
-            value={getValues().text}
+            state={watch('text') ?? ''}
             callback={(text) => setValue('text', text)}
             register={register('text')}
             errors={formState.errors.text?.message}
         />
         <SelectComponent
             title={'Book'}
-            value={getValues().bookId}
+            state={watch('bookId') ?? 0}
             callback={(id) => setValue('bookId', id)}
             register={register('bookId')}
             errors={formState.errors.bookId?.message}
@@ -83,5 +85,5 @@ export const CommentForm = ({
           <button type="button" onClick={handleCancel}>Cancel</button>
         </div>
       </form>
-  );
-};
+  )
+}

@@ -1,8 +1,8 @@
-import React, {useState} from "react";
+import React from "react";
 
 export const SelectComponent = ({
   title,
-  value,
+  state,
   callback,
   register,
   errors,
@@ -10,19 +10,19 @@ export const SelectComponent = ({
   displayField
 }) => {
 
-  const [valueState, setValueState] = useState(value)
-
-  const onFormChange = (e) => {
+  const onValueChange = (e) => {
     const currentValue = Number.parseInt(e.target.value)
-    setValueState(currentValue)
+    console.log('select value changing... ', currentValue)
     callback(currentValue)
   }
 
   return (
       <div className="row" id={`${title} select row`}>
         <label htmlFor={`${title} select`}>{title}</label>
-        <select id={`${title} select`} value={valueState}
-                onChange={onFormChange} {...register}>
+        <select id={`${title} select`}
+                value={state}
+                onChange={event => onValueChange(event)}
+                {...register}>
           <option value={0}>Select {title}</option>
           {items && items.map((item) => (
               <option key={item.id} value={item.id}>

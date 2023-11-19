@@ -19,26 +19,27 @@ export const AuthorForm = ({data: author = {}, handleSubmit, handleCancel}) => {
     register,
     handleSubmit: onFormSubmit,
     setValue,
-    getValues,
+    watch,
     formState
   } = useForm({
     resolver: yupResolver(schema),
   });
 
   React.useEffect(() => {
-    setValue('name', author?.name || '');
+    setValue('name', author?.name ?? '');
   }, [author?.name, setValue]);
 
   const processForm = async (formData) => {
     await handleSubmit({...author, name: formData.name});
   };
 
+  // noinspection JSCheckFunctionSignatures
   return (
       <form className={'form-container'}
             onSubmit={onFormSubmit(processForm)}>
         <TextInputComponent
             title={'Name'}
-            value={getValues().name}
+            state={watch('name') ?? ''}
             callback={(name) => setValue('name', name)}
             register={register('name')}
             errors={formState.errors.name?.message}

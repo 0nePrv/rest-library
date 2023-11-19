@@ -1,3 +1,4 @@
+import React, {useState} from "react"
 import {useQuery} from "react-query";
 import {libraryApi} from "../api/libraryApi";
 import {BookDisplay} from "../model/book/BookDisplay";
@@ -6,12 +7,15 @@ import "../styles/list.css"
 import {ActionPanel} from "../ui/ActionPannel";
 import {useNavigate, useParams} from "react-router-dom";
 import {Loading} from "../ui/Loading";
+import {ErrorDisplay} from "../ui/ErrorDisplay";
 
 export const ListPage = ({
   resource = 'book',
   Component = BookDisplay,
   displayName = 'Books'
 }) => {
+
+  const [deleteError, setDeleteError] = useState(null);
 
   const {remove, getAll} = libraryApi(resource);
 
@@ -20,10 +24,11 @@ export const ListPage = ({
   const navigate = useNavigate()
 
   const doQuery = () => {
-    if (resource === 'comment' && bookId) {
-      return getAll({params: {bookId}})
+    let params = {}
+    if (resource === 'comment') {
+      params = {bookId}
     }
-    return getAll({})
+    return getAll({params})
   }
 
   const {
@@ -33,32 +38,40 @@ export const ListPage = ({
     error
   } = useQuery(['getAll', resource], doQuery);
 
-  if (isLoading) {
-    return <Loading/>
-  }
-  if (error) {
-    return <h1>{error.message}</h1>
-  }
-
   const onCreate = () => {
-    if (resource === 'comment') {
-      navigate(`/book/${bookId}/comment/new`)
-    } else {
-      navigate(`/${resource}/new`)
-    }
+    const base = resource === 'comment' ? `/book/${bookId}/comment`
+        : `/${resource}`;
+    navigate(`${base}/new`);
   }
 
   const onEdit = (obj) => {
-    if (resource === 'comment') {
-      navigate(`/book/${obj.bookId}/comment/edit/${obj.id}`)
-    } else {
-      navigate(`/${resource}/edit/${obj.id}`)
-    }
+    const base = resource === 'comment' ? `/book/${obj.bookId}/comment`
+        : `/${resource}`;
+    navigate(`${base}/edit/${obj.id}`);
   }
 
   const onDelete = async (obj) => {
-    await remove({id: obj.id});
-    await refetch();
+    try {
+      const deleteResponse = await remove({id: obj.id});
+      await refetch()
+      console.log('DELETE RESPONSE: ', deleteResponse)
+      setDeleteError(null)
+    } catch (error) {
+      console.error('DELETE ERROR: ', error)
+      setDeleteError(error)
+    }
+  }
+
+  if (isLoading) {
+    return <Loading/>
+  }
+
+  if (error) {
+    return <ErrorDisplay error={error}/>
+  }
+
+  if (deleteError) {
+    return <ErrorDisplay error={deleteError}/>
   }
 
   return (
@@ -72,16 +85,17 @@ export const ListPage = ({
             <img src={"/icons/plus.png"} alt={"new"}/>
           </button>
         </div>
-        <div className={"container"}>
-          {data ? data.map(obj =>
-              <div key={obj?.id} className={"item"}>
-                <Component props={obj}/>
-                <ActionPanel obj={obj}
-                             handleUpdate={() => onEdit(obj)}
-                             handleDelete={() => onDelete(obj)}/>
-              </div>
-          ) : <p>{displayName} not found</p>}
-        </div>
+        {(data && data.length !== 0) ?
+            (<div className={"container"}>
+              {data.map(obj =>
+                  <div key={obj?.id} className={"item"}>
+                    <Component props={obj}/>
+                    <ActionPanel obj={obj}
+                                 handleUpdate={() => onEdit(obj)}
+                                 handleDelete={() => onDelete(obj)}/>
+                  </div>)}
+            </div>) :
+            <p className={"notFound"}>{displayName} not found</p>}
       </div>
   )
 }

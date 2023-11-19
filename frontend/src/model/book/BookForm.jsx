@@ -8,6 +8,7 @@ import React, {useEffect} from "react";
 import {Loading} from "../../ui/Loading";
 import {TextInputComponent} from "../../ui/TextInputComponent";
 import {SelectComponent} from "../../ui/SelectComponent";
+import {ErrorDisplay} from "../../ui/ErrorDisplay";
 
 export const BookForm = ({
   data: book = {},
@@ -46,30 +47,17 @@ export const BookForm = ({
     register,
     handleSubmit: onFormSubmit,
     setValue,
-    getValues,
+    watch,
     formState
   } = useForm({
     resolver: yupResolver(schema)
   })
 
   useEffect(() => {
-    setValue('name', book?.name || '');
-    setValue('authorId', book?.authorId || 0);
-    setValue('genreId', book?.genreId || 0);
+    setValue('name', book?.name ?? '');
+    setValue('authorId', book?.authorId ?? 0);
+    setValue('genreId', book?.genreId ?? 0);
   }, [book?.name, book?.authorId, book?.genreId, setValue]);
-
-  if (authorsIsLoading || genresIsLoading) {
-    return <Loading/>
-  }
-
-  if (authorsError || genresError) {
-    return (
-        <div>
-          {authorsError && <h1>{authorsError.message}</h1>}
-          {genresError && <h1>{genresError.message}</h1>}
-        </div>
-    );
-  }
 
   const processForm = async (data) => {
     await handleSubmit({
@@ -80,19 +68,36 @@ export const BookForm = ({
     });
   };
 
+  if (authorsIsLoading || genresIsLoading) {
+    return <Loading/>
+  }
+
+  if (authorsError) {
+    return (
+        <ErrorDisplay error={authorsError}/>
+    )
+  }
+
+  if (genresError) {
+    return (
+        <ErrorDisplay error={genresError}/>
+    )
+  }
+
+  // noinspection JSCheckFunctionSignatures
   return (
       <form className={'form-container'}
             onSubmit={onFormSubmit(processForm)}>
         <TextInputComponent
             title={'Name'}
-            value={getValues()?.name}
+            state={watch('name') ?? ''}
             callback={(name) => setValue('name', name)}
             register={register('name')}
             errors={formState.errors.name?.message}
         />
         <SelectComponent
             title={'Author'}
-            value={getValues()?.authorId}
+            state={watch('authorId') ?? 0}
             callback={(id) => setValue('authorId', id)}
             register={register('authorId')}
             errors={formState.errors.authorId?.message}
@@ -101,7 +106,7 @@ export const BookForm = ({
         />
         <SelectComponent
             title={'Gerne'}
-            value={getValues()?.genreId}
+            state={watch('genreId') ?? 0}
             callback={(id) => setValue('genreId', id)}
             register={register('genreId')}
             errors={formState.errors.genreId?.message}

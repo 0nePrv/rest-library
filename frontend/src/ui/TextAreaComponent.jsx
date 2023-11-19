@@ -2,21 +2,31 @@ import React from 'react';
 
 export const TextAreaComponent = ({
   title,
-  value,
+  state,
   callback,
   register,
   errors
-}) => (
-    <div className="row" id={`${title} text input row`}>
-      <label htmlFor={`${title} text area`}>{title}:</label>
-      <textarea
-          autoComplete='on'
-          id={`${title} text area`}
-          placeholder={value}
-          defaultValue={value}
-          onChange={callback}
-          {...register}
-      />
-      {errors && <p className={'validation-errors'}>{errors}</p>}
-    </div>
-);
+}) => {
+
+  const initState = state ?? ''
+
+  const onValueChange = (e) => {
+    console.log('select value changing... ', e.target.value)
+    callback(e.target.value)
+  }
+
+  return (
+      <div className="row" id={`${title} text input row`}>
+        <label htmlFor={`${title} text area`}>{title}:</label>
+        <textarea
+            autoComplete='on'
+            id={`${title} text area`}
+            placeholder={initState}
+            value={state}
+            onChange={event => onValueChange(event)}
+            {...register}
+        />
+        {errors && <p className={'validation-errors'}>{errors}</p>}
+      </div>
+  )
+}
