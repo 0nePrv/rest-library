@@ -21,12 +21,10 @@ export const CreatePage = ({
 
   const onSubmit = async (data) => {
     try {
-      const createResponse = await create({payload: data});
-      console.log('CREATE RESPONSE:', createResponse)
+      await create({payload: data});
       setCreateError(null)
       doNavigate(false, data)
     } catch (error) {
-      console.error('CREATE ERROR:', error)
       setCreateError(error)
     }
   }

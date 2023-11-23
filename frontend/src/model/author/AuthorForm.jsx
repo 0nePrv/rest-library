@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {TextInputComponent} from '../../ui/TextInputComponent';
 import '../../styles/form.css';
 import * as yup from 'yup';
@@ -13,7 +13,7 @@ export const AuthorForm = ({data: author = {}, handleSubmit, handleCancel}) => {
     .required('Name is required')
     .min(4, 'Name too short')
     .max(30, 'Name too long'),
-  });
+  })
 
   const {
     register,
@@ -23,15 +23,15 @@ export const AuthorForm = ({data: author = {}, handleSubmit, handleCancel}) => {
     formState
   } = useForm({
     resolver: yupResolver(schema),
-  });
+  })
 
-  React.useEffect(() => {
+  useEffect(() => {
     setValue('name', author?.name ?? '');
-  }, [author?.name, setValue]);
+  }, [author?.name, setValue])
 
   const processForm = async (formData) => {
     await handleSubmit({...author, name: formData.name});
-  };
+  }
 
   // noinspection JSCheckFunctionSignatures
   return (
@@ -51,5 +51,5 @@ export const AuthorForm = ({data: author = {}, handleSubmit, handleCancel}) => {
           </button>
         </div>
       </form>
-  );
-};
+  )
+}

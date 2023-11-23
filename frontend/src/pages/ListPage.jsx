@@ -15,9 +15,9 @@ export const ListPage = ({
   displayName = 'Books'
 }) => {
 
-  const [deleteError, setDeleteError] = useState(null);
+  const [deleteError, setDeleteError] = useState(null)
 
-  const {remove, getAll} = libraryApi(resource);
+  const {remove, getAll} = libraryApi(resource)
 
   const {bookId} = useParams()
 
@@ -36,28 +36,26 @@ export const ListPage = ({
     refetch,
     isLoading,
     error
-  } = useQuery(['getAll', resource], doQuery);
+  } = useQuery(['getAll', resource], doQuery)
 
   const onCreate = () => {
     const base = resource === 'comment' ? `/book/${bookId}/comment`
-        : `/${resource}`;
-    navigate(`${base}/new`);
+        : `/${resource}`
+    navigate(`${base}/new`)
   }
 
   const onEdit = (obj) => {
     const base = resource === 'comment' ? `/book/${obj.bookId}/comment`
-        : `/${resource}`;
-    navigate(`${base}/edit/${obj.id}`);
+        : `/${resource}`
+    navigate(`${base}/edit/${obj.id}`)
   }
 
   const onDelete = async (obj) => {
     try {
-      const deleteResponse = await remove({id: obj.id});
+      await remove({id: obj.id});
       await refetch()
-      console.log('DELETE RESPONSE: ', deleteResponse)
       setDeleteError(null)
     } catch (error) {
-      console.error('DELETE ERROR: ', error)
       setDeleteError(error)
     }
   }

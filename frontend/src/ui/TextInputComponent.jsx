@@ -11,7 +11,6 @@ export const TextInputComponent = ({
   const initState = state ?? ''
 
   const onValueChange = (e) => {
-    console.log('select value changing... ', e.target.value)
     callback(e.target.value)
   }
 

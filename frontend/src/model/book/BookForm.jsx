@@ -41,7 +41,7 @@ export const BookForm = ({
     .min(1, 'Author is not chosen'),
     genreId: yup.number().required('Genre is required')
     .min(1, 'Genre is not chosen')
-  });
+  })
 
   const {
     register,
@@ -57,16 +57,16 @@ export const BookForm = ({
     setValue('name', book?.name ?? '');
     setValue('authorId', book?.authorId ?? 0);
     setValue('genreId', book?.genreId ?? 0);
-  }, [book?.name, book?.authorId, book?.genreId, setValue]);
+  }, [book?.name, book?.authorId, book?.genreId, setValue])
 
-  const processForm = async (data) => {
-    await handleSubmit({
+  const processForm = (data) => {
+    handleSubmit({
       ...book,
       name: data.name,
       authorId: data.authorId,
       genreId: data.genreId
-    });
-  };
+    })
+  }
 
   if (authorsIsLoading || genresIsLoading) {
     return <Loading/>
@@ -118,5 +118,5 @@ export const BookForm = ({
           <button type="button" onClick={handleCancel}>Cancel</button>
         </div>
       </form>
-  );
-};
+  )
+}

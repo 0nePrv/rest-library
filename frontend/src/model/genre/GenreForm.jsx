@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {TextInputComponent} from '../../ui/TextInputComponent';
 import '../../styles/form.css';
 import * as yup from 'yup';
@@ -25,12 +25,12 @@ export const GenreForm = ({data: genre = {}, handleSubmit, handleCancel}) => {
     resolver: yupResolver(schema),
   })
 
-  React.useEffect(() => {
+  useEffect(() => {
     setValue('name', genre?.name ?? '');
   }, [genre?.name, setValue])
 
-  const processForm = async (formData) => {
-    await handleSubmit({...genre, name: formData.name});
+  const processForm = (formData) => {
+    handleSubmit({...genre, name: formData.name});
   }
 
   // noinspection JSCheckFunctionSignatures

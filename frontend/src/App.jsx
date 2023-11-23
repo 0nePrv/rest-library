@@ -17,7 +17,7 @@ function App() {
           <Routing/>
         </QueryClientProvider>
       </div>
-  );
+  )
 }
 
 export default App;

@@ -12,7 +12,6 @@ export const SelectComponent = ({
 
   const onValueChange = (e) => {
     const currentValue = Number.parseInt(e.target.value)
-    console.log('select value changing... ', currentValue)
     callback(currentValue)
   }
 

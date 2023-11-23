@@ -48,8 +48,8 @@ export const CommentForm = ({
     setValue('bookId', comment?.bookId ?? 0)
   }, [comment?.text, comment?.bookId, setValue])
 
-  const processForm = async (data) => {
-    await handleSubmit({...comment, text: data.text, bookId: data.bookId})
+  const processForm = (data) => {
+    handleSubmit({...comment, text: data.text, bookId: data.bookId})
   }
 
   if (isLoading) {

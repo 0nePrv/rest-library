@@ -26,12 +26,10 @@ export const EditPage = ({
 
   const onSubmit = async (data) => {
     try {
-      const updateResponse = await update({id: data.id, payload: data});
-      console.log('UPDATE RESPONSE:', updateResponse)
+      await update({id: data.id, payload: data});
       setUpdateError(null)
       doNavigate(data)
     } catch (updateError) {
-      console.error('UPDATE ERROR:', error)
       setUpdateError(updateError)
     }
   }
