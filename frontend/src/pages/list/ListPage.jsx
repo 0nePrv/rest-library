@@ -1,15 +1,15 @@
 import React, {useState} from "react"
 import {useQuery} from "react-query";
-import {libraryApi} from "../api/libraryApi";
-import {BookDisplay} from "../model/book/BookDisplay";
-import "../styles/button.css"
-import "../styles/list.css"
-import {ActionPanel} from "../ui/ActionPannel";
+import {libraryApi} from "../../api/libraryApi";
+import {BookDisplay} from "../../components/book/BookDisplay";
+import "../../styles/button.css"
+import "../../styles/list.css"
+import {ActionPanel} from "../../ui/ActionPannel";
 import {useNavigate, useParams} from "react-router-dom";
-import {Loading} from "../ui/Loading";
-import {ErrorDisplay} from "../ui/ErrorDisplay";
+import {Loading} from "../../ui/Loading";
+import {ErrorDisplay} from "../../ui/ErrorDisplay";
 
-export const ListPage = ({
+const ListPage = ({
   resource = 'book',
   Component = BookDisplay,
   displayName = 'Books'
@@ -52,7 +52,7 @@ export const ListPage = ({
 
   const onDelete = async (obj) => {
     try {
-      await remove({id: obj.id});
+      await remove({pathVar: obj.id})
       await refetch()
       setDeleteError(null)
     } catch (error) {
@@ -97,3 +97,5 @@ export const ListPage = ({
       </div>
   )
 }
+
+export default ListPage

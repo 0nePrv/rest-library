@@ -1,16 +1,10 @@
 import React from "react"
 import styles from './App.module.css';
 import {Routing} from "./routing/Routing";
-import {QueryClient, QueryClientProvider} from "react-query";
+import {QueryClientProvider} from "react-query";
+import client from "./api/queryClient";
 
 function App() {
-  const client = new QueryClient({
-    defaultOptions: {
-      queries: {
-        refetchOnWindowFocus: false,
-      }
-    }
-  })
   return (
       <div className={styles.App}>
         <QueryClientProvider client={client}>

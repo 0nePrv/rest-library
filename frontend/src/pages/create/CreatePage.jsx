@@ -1,15 +1,9 @@
-import React from "react"
+import React, {useState} from "react"
 import {useNavigate, useParams} from "react-router-dom";
-import {libraryApi} from "../api/libraryApi";
-import {BookForm} from "../model/book/BookForm";
-import {useState} from "react";
-import {ErrorDisplay} from "../ui/ErrorDisplay";
+import {libraryApi} from "../../api/libraryApi";
+import {ErrorDisplay} from "../../ui/ErrorDisplay";
 
-export const CreatePage = ({
-  resource = 'book',
-  Component = BookForm,
-  displayName = 'Books'
-}) => {
+const CreatePage = ({resource, Component, displayName}) => {
 
   const [createError, setCreateError] = useState(null);
 
@@ -60,3 +54,5 @@ export const CreatePage = ({
       </div>
   )
 }
+
+export default CreatePage

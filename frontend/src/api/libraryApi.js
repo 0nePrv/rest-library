@@ -4,11 +4,11 @@ export const libraryApi = (resource = 'book') => {
 
   const fetchData = async ({
     method = 'GET',
-    id = '',
+    pathVar = '',
     params = {},
     payload = {}
   }) => {
-    const url = `/api/${resource}${id === '' ? '' : '/' + id}`;
+    const url = `/api/${resource}${pathVar === '' ? '' : '/' + pathVar}`
     console.log('REQUEST:', method, url, params, payload)
     const response = await axios({
       url, method, params, data: payload
@@ -19,14 +19,14 @@ export const libraryApi = (resource = 'book') => {
 
   const getAll = ({params = {}}) => fetchData(
       {method: 'GET', params})
-  const get = ({id, params = {}}) => fetchData(
-      {method: 'GET', id, params})
+  const get = ({pathVar, params = {}}) => fetchData(
+      {method: 'GET', pathVar, params})
   const create = ({payload, params = {}}) => fetchData(
       {method: 'POST', params, payload})
-  const update = ({id, payload, params = {}}) => fetchData(
-      {method: 'PUT', id, params, payload})
-  const remove = ({id, params = {}}) => fetchData(
-      {method: 'DELETE', id, params})
+  const update = ({pathVar, payload, params = {}}) => fetchData(
+      {method: 'PUT', pathVar, params, payload})
+  const remove = ({pathVar, params = {}}) => fetchData(
+      {method: 'DELETE', pathVar, params})
 
   return {create, getAll, get, update, remove}
 }
