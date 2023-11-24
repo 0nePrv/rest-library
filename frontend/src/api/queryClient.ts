@@ -1,11 +1,10 @@
 import {QueryClient} from "react-query";
 
-const client = new QueryClient({
+const client: QueryClient = new QueryClient({
   defaultOptions: {
     queries: {
       refetchOnWindowFocus: false,
-      retry: 3,
-      staleTime: 300000
+      retry: 3
     }
   }
 })

@@ -1,7 +1,6 @@
 import React, {useState} from "react"
 import {useQuery} from "react-query";
 import {libraryApi} from "../../api/libraryApi";
-import {BookDisplay} from "../../components/book/BookDisplay";
 import "../../styles/button.css"
 import "../../styles/list.css"
 import {ActionPanel} from "../../ui/ActionPannel";
@@ -9,15 +8,11 @@ import {useNavigate, useParams} from "react-router-dom";
 import {Loading} from "../../ui/Loading";
 import {ErrorDisplay} from "../../ui/ErrorDisplay";
 
-const ListPage = ({
-  resource = 'book',
-  Component = BookDisplay,
-  displayName = 'Books'
-}) => {
+const ListPage = ({resource, Component, displayName}) => {
 
   const [deleteError, setDeleteError] = useState(null)
 
-  const {remove, getAll} = libraryApi(resource)
+  const {remove, getAll} = libraryApi()
 
   const {bookId} = useParams()
 
@@ -28,7 +23,7 @@ const ListPage = ({
     if (resource === 'comment') {
       params = {bookId}
     }
-    return getAll({params})
+    return getAll(resource, params)
   }
 
   const {
@@ -52,7 +47,7 @@ const ListPage = ({
 
   const onDelete = async (obj) => {
     try {
-      await remove({pathVar: obj.id})
+      await remove(resource, obj.id)
       await refetch()
       setDeleteError(null)
     } catch (error) {
@@ -86,8 +81,8 @@ const ListPage = ({
         {(data && data.length !== 0) ?
             (<div className={"container"}>
               {data.map(obj =>
-                  <div key={obj?.id} className={"item"}>
-                    <Component props={obj}/>
+                  <div key={obj.id} className={"item"}>
+                    <Component obj={obj}/>
                     <ActionPanel obj={obj}
                                  handleUpdate={() => onEdit(obj)}
                                  handleDelete={() => onDelete(obj)}/>

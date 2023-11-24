@@ -6,38 +6,34 @@ import {CommentForm} from "../components/comment/CommentForm";
 import {CommentDisplay} from "../components/comment/CommentDisplay";
 import {GenreForm} from "../components/genre/GenreForm";
 import {GenreDisplay} from "../components/genre/GenreDisplay";
+import {Author, Book, Comment, Genre, ResourceConfig, ResourceType} from "../types/types";
 
-const authorRouteConfig = {
-  resource: 'author',
+const authorRouteConfig: ResourceConfig<Author> = {
+  resource: ResourceType.Author,
   name: 'Authors',
   Form: AuthorForm,
   Display: AuthorDisplay
 }
 
-const bookRouteConfig = {
-  resource: 'book',
+const bookRouteConfig: ResourceConfig<Book> = {
+  resource: ResourceType.Book,
   name: 'Books',
   Form: BookForm,
   Display: BookDisplay
 }
 
-const commentRouteConfig = {
-  resource: 'comment',
+const commentRouteConfig: ResourceConfig<Comment> = {
+  resource: ResourceType.Comment,
   name: 'Comments',
   Form: CommentForm,
   Display: CommentDisplay
 }
 
-const gerneRouteConfig = {
-  resource: 'genre',
+const gerneRouteConfig: ResourceConfig<Genre> = {
+  resource: ResourceType.Genre,
   name: 'Genres',
   Form: GenreForm,
   Display: GenreDisplay
 }
 
-export {
-  authorRouteConfig,
-  gerneRouteConfig,
-  commentRouteConfig,
-  bookRouteConfig
-}
+export {authorRouteConfig, gerneRouteConfig, commentRouteConfig, bookRouteConfig}

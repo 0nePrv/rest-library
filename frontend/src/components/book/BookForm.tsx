@@ -4,33 +4,31 @@ import '../../styles/form.css'
 import * as yup from "yup";
 import {useForm} from "react-hook-form";
 import {yupResolver} from "@hookform/resolvers/yup";
-import React, {useEffect} from "react";
+import React, {FC, useEffect} from "react";
 import {Loading} from "../../ui/Loading";
 import {TextInputComponent} from "../../ui/TextInputComponent";
 import {SelectComponent} from "../../ui/SelectComponent";
 import {ErrorDisplay} from "../../ui/ErrorDisplay";
+import {Book, IFormOptions, ResourceType} from "../../types/types";
 
-export const BookForm = ({
-  data: book = {},
-  handleSubmit,
-  handleCancel
-}) => {
 
-  const {getAll: getAllAuthors} = libraryApi('author')
+export const BookForm: FC<IFormOptions<Book>> = ({obj: book, handleSubmit, handleCancel}) => {
 
-  const {getAll: getAllGenres} = libraryApi('genre')
+  const {getAll: getAllAuthors} = libraryApi()
+
+  const {getAll: getAllGenres} = libraryApi()
 
   const {
     data: authors,
     isLoading: authorsIsLoading,
     error: authorsError
-  } = useQuery(['getAll', 'author'], () => getAllAuthors({}))
+  } = useQuery(['getAll', 'author'], () => getAllAuthors(ResourceType.Author))
 
   const {
     data: genres,
     isLoading: genresIsLoading,
     error: genresError
-  } = useQuery(['getAll', 'genre'], () => getAllGenres({}))
+  } = useQuery(['getAll', 'genre'], () => getAllGenres(ResourceType.Genre))
 
   const schema = yup.object().shape({
     name: yup
@@ -59,7 +57,7 @@ export const BookForm = ({
     setValue('genreId', book?.genreId ?? 0);
   }, [book?.name, book?.authorId, book?.genreId, setValue])
 
-  const processForm = (data) => {
+  const processForm = (data: Book) => {
     handleSubmit({
       ...book,
       name: data.name,
@@ -91,14 +89,14 @@ export const BookForm = ({
         <TextInputComponent
             title={'Name'}
             state={watch('name') ?? ''}
-            callback={(name) => setValue('name', name)}
+            callback={(name: string) => setValue('name', name)}
             register={register('name')}
             errors={formState.errors.name?.message}
         />
         <SelectComponent
             title={'Author'}
             state={watch('authorId') ?? 0}
-            callback={(id) => setValue('authorId', id)}
+            callback={(id: number) => setValue('authorId', id)}
             register={register('authorId')}
             errors={formState.errors.authorId?.message}
             items={authors}
@@ -107,7 +105,7 @@ export const BookForm = ({
         <SelectComponent
             title={'Gerne'}
             state={watch('genreId') ?? 0}
-            callback={(id) => setValue('genreId', id)}
+            callback={(id: number) => setValue('genreId', id)}
             register={register('genreId')}
             errors={formState.errors.genreId?.message}
             items={genres}

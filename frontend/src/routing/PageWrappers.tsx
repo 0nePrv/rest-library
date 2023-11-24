@@ -15,18 +15,18 @@ const ListPageWrapper = ({config}) => (
 const EditPageWrapper = ({config}) => (
     <React.Suspense>
       <EditPage
-        Component={config.Form}
-        displayName={config.name}
-        resource={config.resource}/>
+          Component={config.Form}
+          displayName={config.name}
+          resource={config.resource}/>
     </React.Suspense>
 )
 
 const CreatePageWrapper = ({config}) => (
     <React.Suspense>
-    <CreatePage
-        Component={config.Form}
-        displayName={config.name}
-        resource={config.resource}/>
+      <CreatePage
+          Component={config.Form}
+          displayName={config.name}
+          resource={config.resource}/>
     </React.Suspense>
 )
 

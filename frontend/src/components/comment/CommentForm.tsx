@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {FC, useEffect} from 'react';
 import {libraryApi} from '../../api/libraryApi';
 import {useQuery} from 'react-query';
 import {Loading} from '../../ui/Loading';
@@ -9,17 +9,14 @@ import {yupResolver} from '@hookform/resolvers/yup';
 import {TextAreaComponent} from '../../ui/TextAreaComponent';
 import {SelectComponent} from '../../ui/SelectComponent';
 import {ErrorDisplay} from "../../ui/ErrorDisplay";
+import {Comment, IFormOptions, ResourceType} from "../../types/types";
 
-export const CommentForm = ({
-  data: comment = {},
-  handleSubmit,
-  handleCancel
-}) => {
+export const CommentForm: FC<IFormOptions<Comment>> = ({obj: comment, handleSubmit, handleCancel}) => {
 
-  const {getAll} = libraryApi('book')
+  const {getAll} = libraryApi()
 
   const {data: books, error, isLoading} = useQuery(['getAll', 'book'],
-      () => getAll({params: {withRelations: false}}))
+      () => getAll(ResourceType.Comment, [{withRelations: false}]))
 
   const schema = yup.object().shape({
     text: yup
@@ -38,7 +35,7 @@ export const CommentForm = ({
     handleSubmit: onFormSubmit,
     setValue,
     formState,
-      watch
+    watch
   } = useForm({
     resolver: yupResolver(schema)
   })
@@ -48,7 +45,7 @@ export const CommentForm = ({
     setValue('bookId', comment?.bookId ?? 0)
   }, [comment?.text, comment?.bookId, setValue])
 
-  const processForm = (data) => {
+  const processForm = (data: Comment) => {
     handleSubmit({...comment, text: data.text, bookId: data.bookId})
   }
 
@@ -67,14 +64,14 @@ export const CommentForm = ({
         <TextAreaComponent
             title={'Text'}
             state={watch('text') ?? ''}
-            callback={(text) => setValue('text', text)}
+            callback={(text: string) => setValue('text', text)}
             register={register('text')}
             errors={formState.errors.text?.message}
         />
         <SelectComponent
             title={'Book'}
             state={watch('bookId') ?? 0}
-            callback={(id) => setValue('bookId', id)}
+            callback={(id: number) => setValue('bookId', id)}
             register={register('bookId')}
             errors={formState.errors.bookId?.message}
             items={books}

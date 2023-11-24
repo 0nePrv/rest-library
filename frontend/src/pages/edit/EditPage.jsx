@@ -1,19 +1,13 @@
-import React from "react"
+import React, {useState} from "react"
 import {useNavigate, useParams} from "react-router-dom";
 import {useQuery} from "react-query";
 import {libraryApi} from "../../api/libraryApi";
-import {BookForm} from "../../components/book/BookForm";
 import {Loading} from "../../ui/Loading";
-import {useState} from "react";
 import {ErrorDisplay} from "../../ui/ErrorDisplay";
 
-const EditPage = ({
-  resource = 'book',
-  Component = BookForm,
-  displayName = 'Books'
-}) => {
+const EditPage = ({resource, Component, displayName}) => {
 
-  const {update, get} = libraryApi(resource)
+  const {update, get} = libraryApi()
 
   const {bookId, id} = useParams()
 
@@ -22,11 +16,11 @@ const EditPage = ({
   const [updateError, setUpdateError] = useState(null);
 
   const {data, error, isLoading} = useQuery(['update', resource],
-      () => get({pathVar: id}))
+      () => get(resource, id))
 
   const onSubmit = async (data) => {
     try {
-      await update({pathVar: data.id, payload: data});
+      await update(resource, data.id, data);
       setUpdateError(null)
       doNavigate(data)
     } catch (updateError) {
@@ -57,7 +51,7 @@ const EditPage = ({
   return (
       <div>
         <h1>{displayName} edit page</h1>
-        <Component data={data}
+        <Component obj={data}
                    handleSubmit={onSubmit}
                    handleCancel={doNavigate}/>
       </div>

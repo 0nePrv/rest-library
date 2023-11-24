@@ -11,11 +11,11 @@ const CreatePage = ({resource, Component, displayName}) => {
 
   const {bookId} = useParams()
 
-  const {create} = libraryApi(resource)
+  const {create} = libraryApi()
 
   const onSubmit = async (data) => {
     try {
-      await create({payload: data});
+      await create(resource, data);
       setCreateError(null)
       doNavigate(false, data)
     } catch (error) {

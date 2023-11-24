@@ -1,11 +1,12 @@
-import React, {useEffect} from 'react';
+import React, {FC, useEffect} from 'react';
 import {TextInputComponent} from '../../ui/TextInputComponent';
 import '../../styles/form.css';
 import * as yup from 'yup';
 import {useForm} from 'react-hook-form';
 import {yupResolver} from '@hookform/resolvers/yup';
+import {Author, IFormOptions} from "../../types/types";
 
-export const GenreForm = ({data: genre = {}, handleSubmit, handleCancel}) => {
+export const AuthorForm: FC<IFormOptions<Author>> = ({obj: author, handleSubmit, handleCancel}) => {
 
   const schema = yup.object().shape({
     name: yup
@@ -26,11 +27,11 @@ export const GenreForm = ({data: genre = {}, handleSubmit, handleCancel}) => {
   })
 
   useEffect(() => {
-    setValue('name', genre?.name ?? '');
-  }, [genre?.name, setValue])
+    setValue('name', author?.name ?? '')
+  }, [author?.name, setValue])
 
-  const processForm = (formData) => {
-    handleSubmit({...genre, name: formData.name});
+  const processForm = (formData: Author) => {
+    handleSubmit({...author, name: formData.name});
   }
 
   // noinspection JSCheckFunctionSignatures
@@ -40,13 +41,15 @@ export const GenreForm = ({data: genre = {}, handleSubmit, handleCancel}) => {
         <TextInputComponent
             title={'Name'}
             state={watch('name') ?? ''}
-            callback={(name) => setValue('name', name)}
+            callback={(name: string) => setValue('name', name)}
             register={register('name')}
             errors={formState.errors.name?.message}
         />
         <div className="row">
           <input type="submit" value="Submit"/>
-          <button type="button" onClick={handleCancel}>Cancel</button>
+          <button type="button" onClick={handleCancel}>
+            Cancel
+          </button>
         </div>
       </form>
   )

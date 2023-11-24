@@ -1,15 +1,21 @@
-import React from "react"
+import React, {FC} from "react"
 import '../styles/action-panel.css'
 import '../styles/button.css'
 
-export const ActionPanel = ({handleUpdate, handleDelete}) => {
+export interface IActionPanel {
+  handleUpdate: () => void;
+  handleDelete: () => void;
+}
 
-  const onDelete = (e) => {
+
+export const ActionPanel : FC<IActionPanel> = ({handleUpdate, handleDelete}) => {
+
+  const onDelete = (e : React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault()
     handleDelete()
   }
 
-  const onUpdate = (e) => {
+  const onUpdate = (e : React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault()
     handleUpdate()
   }
