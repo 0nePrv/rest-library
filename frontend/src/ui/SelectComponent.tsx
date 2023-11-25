@@ -1,16 +1,11 @@
-import React from "react";
+import React, {ChangeEvent} from "react";
+import {DomainType} from "../types/domainTypes";
+import {ISelectFormProps} from "../types/uiTypes";
 
-export const SelectComponent = ({
-  title,
-  state,
-  callback,
-  register,
-  errors,
-  items,
-  displayField
-}) => {
+export function SelectComponent<T extends DomainType>(
+    {title, state, callback, register, errors, items, displayField}: ISelectFormProps<T>) {
 
-  const onValueChange = (e) => {
+  const onValueChange = (e: ChangeEvent<HTMLSelectElement>) => {
     const currentValue = Number.parseInt(e.target.value)
     callback(currentValue)
   }

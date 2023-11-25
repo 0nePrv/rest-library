@@ -1,17 +1,11 @@
-import React from 'react';
+import React, {ChangeEvent} from 'react';
+import {ICommonTextInputProps} from "../types/uiTypes";
 
-export const TextAreaComponent = ({
-  title,
-  state,
-  callback,
-  register,
-  errors
-}) => {
+export const TextAreaComponent = ({title, state, callback, register, errors}: ICommonTextInputProps) => {
 
   const initState = state ?? ''
 
-  const onValueChange = (e) => {
-    console.log('select value changing... ', e.target.value)
+  const onValueChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
     callback(e.target.value)
   }
 

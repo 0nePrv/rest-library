@@ -7,10 +7,15 @@ import {ActionPanel} from "../../ui/ActionPannel";
 import {useNavigate, useParams} from "react-router-dom";
 import {Loading} from "../../ui/Loading";
 import {ErrorDisplay} from "../../ui/ErrorDisplay";
+import {DomainType} from "../../types/domainTypes";
+import {IPageOptions} from "../../types/pageFormTypes";
+import {APIError} from "../../types/errorTypes";
 
-const ListPage = ({resource, Component, displayName}) => {
+function ListPage<T extends DomainType>({resourceConfig}: IPageOptions<T>) {
 
-  const [deleteError, setDeleteError] = useState(null)
+  const {resource, name, Display} = resourceConfig
+
+  const [apiError, setApiError] = useState<APIError>(null)
 
   const {remove, getAll} = libraryApi()
 
@@ -23,15 +28,15 @@ const ListPage = ({resource, Component, displayName}) => {
     if (resource === 'comment') {
       params = {bookId}
     }
-    return getAll(resource, params)
+    return getAll<T>(resource, params)
   }
 
-  const {
-    data,
-    refetch,
-    isLoading,
-    error
-  } = useQuery(['getAll', resource], doQuery)
+  const {data: result, refetch, isLoading} = useQuery(['getAll', resource],
+      doQuery, {
+        onError(apiError: APIError) {
+          setApiError(apiError)
+        }
+      })
 
   const onCreate = () => {
     const base = resource === 'comment' ? `/book/${bookId}/comment`
@@ -39,19 +44,19 @@ const ListPage = ({resource, Component, displayName}) => {
     navigate(`${base}/new`)
   }
 
-  const onEdit = (obj) => {
-    const base = resource === 'comment' ? `/book/${obj.bookId}/comment`
+  const onEdit = (obj: T) => {
+    const base = resource === 'comment' ? `/book/${obj['bookId']}/comment`
         : `/${resource}`
     navigate(`${base}/edit/${obj.id}`)
   }
 
-  const onDelete = async (obj) => {
+  const onDelete = async (obj: T) => {
     try {
-      await remove(resource, obj.id)
+      await remove(resource, obj.id.toString())
       await refetch()
-      setDeleteError(null)
+      setApiError(null)
     } catch (error) {
-      setDeleteError(error)
+      setApiError(error)
     }
   }
 
@@ -59,36 +64,31 @@ const ListPage = ({resource, Component, displayName}) => {
     return <Loading/>
   }
 
-  if (error) {
-    return <ErrorDisplay error={error}/>
-  }
-
-  if (deleteError) {
-    return <ErrorDisplay error={deleteError}/>
+  if (apiError) {
+    return <ErrorDisplay response={apiError.response}/>
   }
 
   return (
       <div>
         <div className={"header"}>
-          <h1>{displayName} page</h1>
-          <button className={"button"} title={"refresh"} onClick={refetch}>
+          <h1>{name} page</h1>
+          <button className={"button"} title={"refresh"} onClick={() => refetch()}>
             <img src="/icons/refresh.png" alt={"refresh"}/>
           </button>
           <button className={"button"} title={"add"} onClick={onCreate}>
             <img src={"/icons/plus.png"} alt={"new"}/>
           </button>
         </div>
-        {(data && data.length !== 0) ?
+        {(result?.data && result.data.length !== 0) ?
             (<div className={"container"}>
-              {data.map(obj =>
+              {result.data.map(obj =>
                   <div key={obj.id} className={"item"}>
-                    <Component obj={obj}/>
-                    <ActionPanel obj={obj}
-                                 handleUpdate={() => onEdit(obj)}
+                    <Display obj={obj}/>
+                    <ActionPanel handleUpdate={() => onEdit(obj)}
                                  handleDelete={() => onDelete(obj)}/>
                   </div>)}
             </div>) :
-            <p className={"notFound"}>{displayName} not found</p>}
+            <p className={"notFound"}>{name} not found</p>}
       </div>
   )
 }

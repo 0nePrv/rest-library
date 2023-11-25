@@ -4,7 +4,8 @@ import '../../styles/form.css';
 import * as yup from 'yup';
 import {useForm} from 'react-hook-form';
 import {yupResolver} from '@hookform/resolvers/yup';
-import {Genre, IFormOptions} from "../../types/types";
+import {IFormOptions} from "../../types/pageFormTypes";
+import {Genre} from "../../types/domainTypes";
 
 export const GenreForm: FC<IFormOptions<Genre>> = ({obj: genre, handleSubmit, handleCancel}) => {
 
@@ -34,7 +35,6 @@ export const GenreForm: FC<IFormOptions<Genre>> = ({obj: genre, handleSubmit, ha
     handleSubmit({...genre, name: formData.name});
   }
 
-  // noinspection JSCheckFunctionSignatures
   return (
       <form className={'form-container'}
             onSubmit={onFormSubmit(processForm)}>

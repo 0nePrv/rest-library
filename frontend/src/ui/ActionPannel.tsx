@@ -1,11 +1,7 @@
 import React, {FC} from "react"
 import '../styles/action-panel.css'
 import '../styles/button.css'
-
-export interface IActionPanel {
-  handleUpdate: () => void;
-  handleDelete: () => void;
-}
+import {IActionPanel} from "../types/uiTypes";
 
 
 export const ActionPanel : FC<IActionPanel> = ({handleUpdate, handleDelete}) => {

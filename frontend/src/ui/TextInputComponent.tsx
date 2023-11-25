@@ -1,16 +1,11 @@
-import React from 'react'
+import React, {ChangeEvent} from 'react'
+import {ICommonTextInputProps} from "../types/uiTypes";
 
-export const TextInputComponent = ({
-  title,
-  state,
-  callback,
-  register,
-  errors,
-}) => {
+export const TextInputComponent = ({title, state, callback, register, errors}: ICommonTextInputProps) => {
 
   const initState = state ?? ''
 
-  const onValueChange = (e) => {
+  const onValueChange = (e: ChangeEvent<HTMLInputElement>) => {
     callback(e.target.value)
   }
 

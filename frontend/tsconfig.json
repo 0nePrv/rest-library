@@ -5,8 +5,14 @@
     "sourceMap": true,
     "esModuleInterop": true,
     "allowJs": true,
-    "jsx": "react-jsx"
+    "jsx": "react-jsx",
+    "moduleResolution": "node",
+    "baseUrl": "./src"
   },
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.tsx"
+  ],
   "exclude": [
     "node_modules"
   ]

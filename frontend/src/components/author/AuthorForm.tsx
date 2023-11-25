@@ -4,7 +4,8 @@ import '../../styles/form.css';
 import * as yup from 'yup';
 import {useForm} from 'react-hook-form';
 import {yupResolver} from '@hookform/resolvers/yup';
-import {Author, IFormOptions} from "../../types/types";
+import {IFormOptions} from "../../types/pageFormTypes";
+import {Author} from "../../types/domainTypes";
 
 export const AuthorForm: FC<IFormOptions<Author>> = ({obj: author, handleSubmit, handleCancel}) => {
 
@@ -34,7 +35,6 @@ export const AuthorForm: FC<IFormOptions<Author>> = ({obj: author, handleSubmit,
     handleSubmit({...author, name: formData.name});
   }
 
-  // noinspection JSCheckFunctionSignatures
   return (
       <form className={'form-container'}
             onSubmit={onFormSubmit(processForm)}>

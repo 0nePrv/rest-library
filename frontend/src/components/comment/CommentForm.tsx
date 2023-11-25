@@ -1,4 +1,4 @@
-import React, {FC, useEffect} from 'react';
+import React, {FC, useEffect, useState} from 'react';
 import {libraryApi} from '../../api/libraryApi';
 import {useQuery} from 'react-query';
 import {Loading} from '../../ui/Loading';
@@ -9,14 +9,24 @@ import {yupResolver} from '@hookform/resolvers/yup';
 import {TextAreaComponent} from '../../ui/TextAreaComponent';
 import {SelectComponent} from '../../ui/SelectComponent';
 import {ErrorDisplay} from "../../ui/ErrorDisplay";
-import {Comment, IFormOptions, ResourceType} from "../../types/types";
+import {IFormOptions} from "../../types/pageFormTypes";
+import {Book, Comment} from "../../types/domainTypes";
+import {ResourceType} from "../../types/resourceTypes";
+import {APIError} from "../../types/errorTypes";
 
-export const CommentForm: FC<IFormOptions<Comment>> = ({obj: comment, handleSubmit, handleCancel}) => {
+export const CommentForm: FC<IFormOptions<Comment>> = (
+    {obj: comment, handleSubmit, handleCancel}) => {
 
   const {getAll} = libraryApi()
 
-  const {data: books, error, isLoading} = useQuery(['getAll', 'book'],
-      () => getAll(ResourceType.Comment, [{withRelations: false}]))
+  const [apiError, setApiError] = useState<APIError>(null);
+
+  const {data: books, isLoading} = useQuery(['getAll', 'book'],
+      () => getAll<Book>(ResourceType.Book, {withRelations: false}), {
+        onError(apiError: APIError) {
+          setApiError(apiError)
+        }
+      })
 
   const schema = yup.object().shape({
     text: yup
@@ -53,11 +63,10 @@ export const CommentForm: FC<IFormOptions<Comment>> = ({obj: comment, handleSubm
     return <Loading/>
   }
 
-  if (error) {
-    return <ErrorDisplay error={error}/>
+  if (apiError) {
+    return <ErrorDisplay response={apiError.response}/>
   }
 
-  // noinspection JSCheckFunctionSignatures
   return (
       <form className={'form-container'}
             onSubmit={onFormSubmit(processForm)}>
@@ -74,7 +83,7 @@ export const CommentForm: FC<IFormOptions<Comment>> = ({obj: comment, handleSubm
             callback={(id: number) => setValue('bookId', id)}
             register={register('bookId')}
             errors={formState.errors.bookId?.message}
-            items={books}
+            items={books.data}
             displayField={'name'}
         />
         <div className="row">

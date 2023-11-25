@@ -1,43 +1,55 @@
-import axios, {Method} from 'axios';
-import {ResourceType} from "../types/types";
+import axios, {AxiosError, AxiosInstance, AxiosResponse} from 'axios';
+import {APIError} from "../types/errorTypes";
+import {ILibraryApiProps, IMultiResult, ISingleResult, ResultType} from "../types/apiTypes";
+import {DomainType} from "../types/domainTypes";
+import {ResourceType} from "../types/resourceTypes";
 
-export interface ILibraryApi {
-  resource: ResourceType;
-  method: Method;
-  pathVar?: string;
-  params?: object[];
-  payload?: any
-}
 
-export const libraryApi = () => {
+const instance: AxiosInstance = axios.create()
 
-  const fetchData = async (
-      {
-        resource,
-        method,
-        pathVar = '',
-        params = [],
-        payload = {}
-      }: ILibraryApi) => {
+instance.interceptors.response.use(
+    (response: AxiosResponse) => response,
+    (error: AxiosError) => {
+      const displayError: APIError = {response: error.response}
+      return Promise.reject(displayError)
+    }, {
+      synchronous: false
+    }
+);
+
+export function libraryApi() {
+
+  async function fetchData<T extends ResultType<D>, D extends DomainType>(
+      {resource, method, pathVar = '', params = {}, payload = {}}: ILibraryApiProps): Promise<T> {
     const url = `/api/${resource}${pathVar === '' ? '' : '/' + pathVar}`
     console.log('REQUEST:', method, url, params, payload)
-    const response = await axios({
-      url, method, params, data: payload
+
+    return await instance.request<T>({url, method, params, data: payload})
+    .then((response: AxiosResponse<T>) => {
+      console.log('RESPONSE:', response)
+      return {data: response.data} as unknown as T
     })
-    console.log('RESPONSE:', response)
-    return response.data
   }
 
-  const getAll = (resource: ResourceType, params: object[] = []) => fetchData(
-      {method: 'GET', params, resource})
-  const get = (resource: ResourceType, pathVar: string, params: object[] = []) => fetchData(
-      {resource, method: 'GET', pathVar, params})
-  const create = (resource: ResourceType, payload: any, params: object[] = []) => fetchData(
-      {resource, method: 'POST', params, payload})
-  const update = (resource: ResourceType, pathVar: string, payload: any, params: object[] = []) => fetchData(
-      {resource, method: 'PUT', pathVar, params, payload})
-  const remove = (resource: ResourceType, pathVar: string, params: object[] = []) => fetchData(
-      {resource, method: 'DELETE', pathVar, params})
+    function getAll<T extends DomainType>(resource: ResourceType, params: object = {}) {
+      return fetchData<IMultiResult<T>, T>({resource, method: 'GET', params})
+    }
+
+  function get<T extends DomainType>(resource: ResourceType, pathVar: string, params: object = {}) {
+    return fetchData<ISingleResult<T>, T>({resource, method: 'GET', pathVar, params})
+  }
+
+  function create<T extends DomainType>(resource: ResourceType, payload: any, params: object = {}) {
+    return fetchData<ISingleResult<T>, T>({resource, method: 'POST', params, payload})
+  }
+
+  function update<T extends DomainType>(resource: ResourceType, pathVar: string, payload: any, params: object = {}) {
+    return fetchData<ISingleResult<T>, T>({resource, method: 'PUT', pathVar, params, payload})
+  }
+
+  function remove(resource: ResourceType, pathVar: string, params: object = {}) {
+    return fetchData({resource, method: 'DELETE', pathVar, params})
+  }
 
   return {create, getAll, get, update, remove}
 }

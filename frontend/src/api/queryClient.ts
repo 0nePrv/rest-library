@@ -5,7 +5,7 @@ const client: QueryClient = new QueryClient({
     queries: {
       refetchOnWindowFocus: false,
       retry: 3
-    }
+    },
   }
 })
 

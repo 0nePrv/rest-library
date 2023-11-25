@@ -1,27 +1,13 @@
 import React from "react"
 import {Link} from "react-router-dom";
 import '../styles/navbar.css'
+import {navBarRoutesConfigs} from "../routing/config"
 
 export const Navbar = () => {
 
-  const routes = [
-    {
-      resource: 'book',
-      name: 'Books'
-    },
-    {
-      resource: 'author',
-      name: 'Authors'
-    },
-    {
-      resource: 'genre',
-      name: 'Genres'
-    }
-  ];
-
   return (
       <nav className={"navbar"}>
-        {routes.map(
+        {navBarRoutesConfigs.map(
             route =>
                 <Link key={`${route.resource} route`}
                       className={"links"}

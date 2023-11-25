@@ -1,6 +1,7 @@
 import React, {FC} from "react"
 import '../../styles/item.css'
-import {Comment, IDisplayOptions} from "../../types/types";
+import {IDisplayOptions} from "../../types/pageFormTypes";
+import {Comment} from "../../types/domainTypes";
 
 export const CommentDisplay : FC<IDisplayOptions<Comment>> = ({obj: comment}) => {
   return (

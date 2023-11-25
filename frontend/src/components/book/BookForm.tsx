@@ -4,31 +4,41 @@ import '../../styles/form.css'
 import * as yup from "yup";
 import {useForm} from "react-hook-form";
 import {yupResolver} from "@hookform/resolvers/yup";
-import React, {FC, useEffect} from "react";
+import React, {FC, useEffect, useState} from "react";
 import {Loading} from "../../ui/Loading";
 import {TextInputComponent} from "../../ui/TextInputComponent";
 import {SelectComponent} from "../../ui/SelectComponent";
 import {ErrorDisplay} from "../../ui/ErrorDisplay";
-import {Book, IFormOptions, ResourceType} from "../../types/types";
+import {authorRouteConfig, gerneRouteConfig} from "../../routing/config";
+import {IFormOptions} from "../../types/pageFormTypes";
+import {Author, Book, Genre} from "../../types/domainTypes";
+import {ResourceType} from "../../types/resourceTypes";
+import {APIError} from "../../types/errorTypes";
 
 
 export const BookForm: FC<IFormOptions<Book>> = ({obj: book, handleSubmit, handleCancel}) => {
 
-  const {getAll: getAllAuthors} = libraryApi()
+  const {getAll} = libraryApi()
 
-  const {getAll: getAllGenres} = libraryApi()
+  const [apiError, setApiError] = useState<APIError>(null);
 
   const {
     data: authors,
     isLoading: authorsIsLoading,
-    error: authorsError
-  } = useQuery(['getAll', 'author'], () => getAllAuthors(ResourceType.Author))
+  } = useQuery(['getAll', 'author'], () => getAll<Author>(ResourceType.Author),{
+    onError(apiError : APIError) {
+      setApiError(apiError)
+    }
+  })
 
   const {
     data: genres,
-    isLoading: genresIsLoading,
-    error: genresError
-  } = useQuery(['getAll', 'genre'], () => getAllGenres(ResourceType.Genre))
+    isLoading: genresIsLoading
+  } = useQuery(['getAll', 'genre'], () => getAll<Genre>(ResourceType.Genre),{
+    onError(apiError : APIError) {
+      setApiError(apiError)
+    }
+  })
 
   const schema = yup.object().shape({
     name: yup
@@ -70,19 +80,10 @@ export const BookForm: FC<IFormOptions<Book>> = ({obj: book, handleSubmit, handl
     return <Loading/>
   }
 
-  if (authorsError) {
-    return (
-        <ErrorDisplay error={authorsError}/>
-    )
+  if (apiError) {
+    return <ErrorDisplay response={apiError.response}/>
   }
 
-  if (genresError) {
-    return (
-        <ErrorDisplay error={genresError}/>
-    )
-  }
-
-  // noinspection JSCheckFunctionSignatures
   return (
       <form className={'form-container'}
             onSubmit={onFormSubmit(processForm)}>
@@ -93,22 +94,22 @@ export const BookForm: FC<IFormOptions<Book>> = ({obj: book, handleSubmit, handl
             register={register('name')}
             errors={formState.errors.name?.message}
         />
-        <SelectComponent
-            title={'Author'}
+        <SelectComponent<Author>
+            title={authorRouteConfig.name}
             state={watch('authorId') ?? 0}
             callback={(id: number) => setValue('authorId', id)}
             register={register('authorId')}
             errors={formState.errors.authorId?.message}
-            items={authors}
+            items={authors.data}
             displayField={'name'}
         />
-        <SelectComponent
-            title={'Gerne'}
+        <SelectComponent<Genre>
+            title={gerneRouteConfig.name}
             state={watch('genreId') ?? 0}
             callback={(id: number) => setValue('genreId', id)}
             register={register('genreId')}
             errors={formState.errors.genreId?.message}
-            items={genres}
+            items={genres.data}
             displayField={'name'}
         />
         <div className="row">

@@ -1,6 +1,7 @@
 import React, {FC} from "react"
 import '../../styles/item.css'
-import {Genre, IDisplayOptions} from "../../types/types";
+import {IDisplayOptions} from "../../types/pageFormTypes";
+import {Genre} from "../../types/domainTypes";
 
 export const GenreDisplay: FC<IDisplayOptions<Genre>> = ({obj: genre}) => {
   return (

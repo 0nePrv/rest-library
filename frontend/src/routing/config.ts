@@ -6,7 +6,8 @@ import {CommentForm} from "../components/comment/CommentForm";
 import {CommentDisplay} from "../components/comment/CommentDisplay";
 import {GenreForm} from "../components/genre/GenreForm";
 import {GenreDisplay} from "../components/genre/GenreDisplay";
-import {Author, Book, Comment, Genre, ResourceConfig, ResourceType} from "../types/types";
+import {ResourceConfig, ResourceType} from "../types/resourceTypes";
+import {Author, Book, Comment, DomainType, Genre} from "../types/domainTypes";
 
 const authorRouteConfig: ResourceConfig<Author> = {
   resource: ResourceType.Author,
@@ -36,4 +37,10 @@ const gerneRouteConfig: ResourceConfig<Genre> = {
   Display: GenreDisplay
 }
 
-export {authorRouteConfig, gerneRouteConfig, commentRouteConfig, bookRouteConfig}
+const navBarRoutesConfigs: ResourceConfig<DomainType>[] = [
+  bookRouteConfig,
+  authorRouteConfig,
+  gerneRouteConfig,
+]
+
+export {authorRouteConfig, gerneRouteConfig, commentRouteConfig, bookRouteConfig, navBarRoutesConfigs}

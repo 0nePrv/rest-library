@@ -1,6 +1,6 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "Library React app",
+  "name": "Frontend part of REST library application",
   "icons": [
     {
       "src": "favicon.ico",

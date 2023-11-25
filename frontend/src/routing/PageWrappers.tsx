@@ -5,28 +5,19 @@ import React from "react";
 
 const ListPageWrapper = ({config}) => (
     <React.Suspense>
-      <ListPage
-          Component={config.Display}
-          displayName={config.name}
-          resource={config.resource}/>
+      <ListPage resourceConfig={config}/>
     </React.Suspense>
 )
 
 const EditPageWrapper = ({config}) => (
     <React.Suspense>
-      <EditPage
-          Component={config.Form}
-          displayName={config.name}
-          resource={config.resource}/>
+      <EditPage resourceConfig={config}/>
     </React.Suspense>
 )
 
 const CreatePageWrapper = ({config}) => (
     <React.Suspense>
-      <CreatePage
-          Component={config.Form}
-          displayName={config.name}
-          resource={config.resource}/>
+      <CreatePage resourceConfig={config}/>
     </React.Suspense>
 )
 
